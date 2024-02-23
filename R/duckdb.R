@@ -9,8 +9,3 @@ ds_register <- function(ds)
     arrow_scannable = ds
   )
 }
-
-#' @export
-if (!exists("conn") || !dbIsValid(conn)) {
-  conn = DBI::dbConnect(duckdb::duckdb())
-}

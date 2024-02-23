@@ -14,5 +14,5 @@ Copie locale d'un chemin s3
 }
 \note{
 Peut être utilisé avec read_parquet, write_parquet
-      et read_csv_arrow
+et read_csv_arrow
 }

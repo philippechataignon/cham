@@ -1,0 +1,52 @@
+#' Calcul taux évolution
+#' @export
+txevol <- function(pop1, pop2, nb_an = 5)
+{
+  round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, 3)
+}
+
+#' Calcul taux évolution d'un solde
+#' @export
+txevol_solde <- function(pop1, pop2, evol, nb_an = 5)
+{
+  round(
+    ifelse(
+      pop1 == pop2,
+      100 * evol / (nb_an * pop1),
+      txevol(pop1, pop2, nb_an) * evol / (pop2 - pop1)
+    ),
+  3)
+}
+
+
+#' Télécharge un fichier si absent
+#' @export
+download <- function(url, file, dir)
+{
+  if (missing(file))
+    file = basename(url)
+  if (missing(dir))
+    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset=NA), "/tmp")
+  path = file.path(dir, file)
+  if (!file.exists(path)) {
+    ret = download.file(url, path)
+  } else {
+    cat(path, "present", "\n")
+  }
+  path
+}
+
+#' Supprime les variables commençant par . dans un data.table
+#' @export
+drop_temp <- function(DT)
+{
+  set(DT, j = grep("^\\.", colnames(DT)), value = NULL)
+  DT
+}
+
+#' Récupère le timestamp actuel en secondes
+#' @export
+get_time <- function()
+{
+  proc.time()["elapsed"]
+}

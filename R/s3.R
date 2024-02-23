@@ -1,11 +1,14 @@
 #' Crée un filesystem s3 avec les variables environnement
 #' @export
-s3fs <- arrow::S3FileSystem$create(
-  access_key = Sys.getenv('AWS_ACCESS_KEY_ID'),
-  secret_key = Sys.getenv('AWS_SECRET_ACCESS_KEY'),
-  session_token = Sys.getenv('AWS_SESSION_TOKEN'),
-  endpoint_override=Sys.getenv('AWS_S3_ENDPOINT')
-)
+s3createfs <- function()
+{
+  arrow::S3FileSystem$create(
+    access_key = Sys.getenv('AWS_ACCESS_KEY_ID'),
+    secret_key = Sys.getenv('AWS_SECRET_ACCESS_KEY'),
+    session_token = Sys.getenv('AWS_SESSION_TOKEN'),
+    endpoint_override=Sys.getenv('AWS_S3_ENDPOINT')
+  )
+}
 
 #' Compression zstd pour write_parquet
 #' @export
