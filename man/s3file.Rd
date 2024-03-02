@@ -2,7 +2,7 @@
 % Please edit documentation in R/s3.R
 \name{s3file}
 \alias{s3file}
-\title{Copie locale d'un chemin s3}
+\title{Renvoit un SubFileSystemTree}
 \usage{
 s3file(path, fs, ...)
 }
@@ -10,7 +10,7 @@ s3file(path, fs, ...)
 \item{path}{: chemin}
 }
 \description{
-Copie locale d'un chemin s3
+Renvoit un SubFileSystemTree
 }
 \note{
 Peut être utilisé avec read_parquet, write_parquet

@@ -47,7 +47,7 @@ s3copy <- function(path, fs, dir="/tmp", ...)
   outfile
 }
 
-#' Copie locale d'un chemin s3
+#' Renvoit un SubFileSystemTree
 #' @param path : chemin
 #' @note Peut être utilisé avec read_parquet, write_parquet
 #'       et read_csv_arrow
