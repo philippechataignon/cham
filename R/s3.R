@@ -27,7 +27,12 @@ s3path <- function(path, bucket, prefix)
     bucket = Sys.getenv("BUCKET")
   if (missing(prefix))
     prefix = Sys.getenv("PREFIX")
-  file.path(bucket, prefix, path)
+  if (nchar(prefix) == 0) {
+    ret = file.path(bucket, path)
+  } else {
+    ret = file.path(bucket, prefix, path)
+  }
+  ret
 }
 
 #' Copie locale d'un chemin s3
