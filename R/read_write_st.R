@@ -22,6 +22,7 @@ write_s3_st <- function(st_table, name, s3path = "gpkg")
 #' Lit une table de classe sf depuis stockage s3
 #' @param name : nom du fichier à lire
 #' @param s3path : chemin du stockage s3, par défaut `gpkg`
+#' @export
 read_s3_st <- function(name, s3path="gpkg")
 {
   cat("Read from s3", file.path(s3path, name), "\n")
