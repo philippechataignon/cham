@@ -17,6 +17,7 @@ write_s3_st <- function(st_table, name, s3path = "gpkg")
   cat("Write to s3", file.path(s3path, name), "\n")
   arrow::copy_files(tmpdir, s3file(file.path(s3path, name)))
   unlink(tmpdir, recursive = T)
+  st_table
 }
 
 #' Lit une table de classe sf depuis stockage s3
