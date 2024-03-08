@@ -10,13 +10,6 @@ s3createfs <- function()
   )
 }
 
-#' Compression zstd pour write_parquet
-#' @export
-write_parquet <- function(...)
-{
-  arrow::write_parquet(..., compression = "zstd")
-}
-
 #' Renvoit une chaine s3 depuis un chemin
 #' @param path : chemin
 #' @return chaîne chemin
