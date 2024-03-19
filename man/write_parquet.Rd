@@ -4,7 +4,7 @@
 \alias{write_parquet}
 \title{Compression zstd pour write_parquet}
 \usage{
-write_parquet(dt, ...)
+write_parquet(dt, path, quiet = F, ...)
 }
 \description{
 Compression zstd pour write_parquet
