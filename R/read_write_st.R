@@ -24,7 +24,7 @@ write_s3_st <- function(st_table, name, s3path = "gpkg")
 #' @param name : nom du fichier à lire
 #' @param s3path : chemin du stockage s3, par défaut `gpkg`
 #' @export
-read_s3_st <- function(name, s3path="gpkg", tmp_dir = "/tmp")
+read_s3_st <- function(name, s3path="gpkg", tmp_dir = tempdir())
 {
   cat("Read from s3", file.path(s3path, name), "\n")
   arrow::copy_files(s3file(file.path(s3path, name)), tmp_dir)

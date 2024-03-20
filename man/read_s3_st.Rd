@@ -4,7 +4,7 @@
 \alias{read_s3_st}
 \title{Lit une table de classe sf depuis stockage s3}
 \usage{
-read_s3_st(name, s3path = "gpkg", tmp_dir = "/tmp")
+read_s3_st(name, s3path = "gpkg", tmp_dir = tempdir())
 }
 \arguments{
 \item{name}{: nom du fichier à lire}
