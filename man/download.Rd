@@ -4,7 +4,7 @@
 \alias{download}
 \title{Télécharge un fichier si absent}
 \usage{
-download(url, file, dir)
+download(url, file, dir, force = FALSE)
 }
 \description{
 Télécharge un fichier si absent

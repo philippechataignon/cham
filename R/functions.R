@@ -21,14 +21,14 @@ txevol_solde <- function(pop1, pop2, evol, nb_an = 5)
 
 #' Télécharge un fichier si absent
 #' @export
-download <- function(url, file, dir)
+download <- function(url, file, dir, force = FALSE)
 {
   if (missing(file))
     file = basename(url)
   if (missing(dir))
     dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset=NA), "/tmp")
   path = file.path(dir, file)
-  if (!file.exists(path)) {
+  if (force || !file.exists(path)) {
     ret = download.file(url, path)
   } else {
     cat(path, "present", "\n")
