@@ -28,18 +28,6 @@ s3path <- function(path, bucket, prefix)
   ret
 }
 
-#' Copie locale d'un chemin s3
-#' @param path : chemin
-#' @export
-s3copy <- function(path, fs, dir="/tmp", ...)
-{
-  if (missing(fs))
-    fs = s3fs
-  outfile = file.path(dir, basename(path))
-  writeBin(as.raw(fs$OpenInputFile(s3path(path, ...))$Read()), outfile)
-  outfile
-}
-
 #' Renvoit un SubFileSystemTree
 #' @param path : chemin
 #' @note Peut être utilisé avec read_parquet, write_parquet
