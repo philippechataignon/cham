@@ -39,3 +39,41 @@ s3file <- function(path, fs, ...)
     fs = s3fs
   fs$path(s3path(path, ...))
 }
+
+#' Teste si path existe
+#' @param path : chemin
+#' @export
+s3exists <- function(path, fs, ...)
+{
+  if (missing(fs))
+    fs = s3fs
+  fileinfo = fs$GetFileInfo(s3path(path, ...))
+  fileinfo[[1]]$type != 0
+}
+
+#' Télécharge un fichier dans s3 si absent
+#' @param url : url à télécharger
+#' @param path : chemin s3 à créer, si absent prend le dernier nom de l'url
+#' @param fs : filesystem, par défaut s3fs
+#' @param force : force le téléchargement même si fichier déjà présent
+#' @return Renvoit un SubTreeFileSystem utilisable avec `copy_files`
+#' @export
+s3download <- function(url, path, fs, force = FALSE)
+{
+  if (missing(path))
+    path = file.path("download", basename(url))
+  file = basename(path)
+  if (force || !s3exists(path, fs=fs)) {
+    # crée répertoire temporaire
+    tmpdir = tempfile()
+    dir.create(tmpdir)
+    outfile = file.path(tmpdir, file)
+    ret = download.file(url, outfile)
+    cat("Write to s3", path, "\n")
+    arrow::copy_files(tmpdir, s3file(path, fs=fs))
+    unlink(tmpdir, recursive = T)
+  } else {
+    cat(path, "present", "\n")
+  }
+  s3file(path, fs=fs)
+}
