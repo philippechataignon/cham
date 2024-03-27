@@ -26,7 +26,7 @@ download <- function(url, file, dir, force = FALSE)
   if (missing(file))
     file = basename(url)
   if (missing(dir))
-    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset=NA), "/tmp")
+    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset=NA), tempdir())
   path = file.path(dir, file)
   if (force || !file.exists(path)) {
     ret = download.file(url, path)
