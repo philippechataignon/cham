@@ -1,3 +1,3 @@
 devtools::document()
-devtools::install()
+devtools::install(dependencies=F)
 devtools::test()
