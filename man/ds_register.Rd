@@ -4,7 +4,7 @@
 \alias{ds_register}
 \title{Traite un dataset arrow comme un table duckdb}
 \usage{
-ds_register(ds)
+ds_register(conn, ds)
 }
 \arguments{
 \item{ds}{: dataset arrow}
