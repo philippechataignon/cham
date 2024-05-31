@@ -4,7 +4,7 @@
 \alias{txevol}
 \title{Calcul taux évolution}
 \usage{
-txevol(pop1, pop2, nb_an = 5)
+txevol(pop1, pop2, nb_an, dec = 6)
 }
 \description{
 Calcul taux évolution

@@ -4,7 +4,7 @@
 \alias{txevol_solde}
 \title{Calcul taux évolution d'un solde}
 \usage{
-txevol_solde(pop1, pop2, evol, nb_an = 5)
+txevol_solde(pop1, pop2, evol, nb_an, dec = 6)
 }
 \description{
 Calcul taux évolution d'un solde

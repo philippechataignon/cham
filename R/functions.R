@@ -1,13 +1,13 @@
 #' Calcul taux évolution
 #' @export
-txevol <- function(pop1, pop2, nb_an = 5)
+txevol <- function(pop1, pop2, nb_an, dec = 6)
 {
-  round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, 3)
+  round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, dec)
 }
 
 #' Calcul taux évolution d'un solde
 #' @export
-txevol_solde <- function(pop1, pop2, evol, nb_an = 5)
+txevol_solde <- function(pop1, pop2, evol, nb_an, dec = 6)
 {
   round(
     ifelse(
@@ -15,7 +15,7 @@ txevol_solde <- function(pop1, pop2, evol, nb_an = 5)
       100 * evol / (nb_an * pop1),
       txevol(pop1, pop2, nb_an) * evol / (pop2 - pop1)
     ),
-  3)
+  dec)
 }
 
 
