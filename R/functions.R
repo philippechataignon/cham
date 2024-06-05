@@ -2,7 +2,13 @@
 #' @export
 txevol <- function(pop1, pop2, nb_an, dec = 6)
 {
-  round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, dec)
+  fcase(
+        pop1 < 0, NA_real_,
+        pop2 < 0, NA_real_,
+        pop1 == 0, 0,
+        pop2 == 0, 0,
+        pop1 > 0, round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, dec)
+  )
 }
 
 #' Calcul taux évolution d'un solde
@@ -10,10 +16,10 @@ txevol <- function(pop1, pop2, nb_an, dec = 6)
 txevol_solde <- function(pop1, pop2, evol, nb_an, dec = 6)
 {
   round(
-    ifelse(
-      pop1 == pop2,
-      100 * evol / (nb_an * pop1),
-      txevol(pop1, pop2, nb_an) * evol / (pop2 - pop1)
+    fcase(
+      nb_an * pop1 == 0, 0,
+      pop1 == pop2, 100 * evol / (nb_an * pop1),
+      pop1 != pop2, txevol(pop1, pop2, nb_an) * evol / (pop2 - pop1)
     ),
   dec)
 }
