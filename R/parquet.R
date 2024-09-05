@@ -2,9 +2,6 @@
 #' @export
 write_parquet <- function(dt, path, quiet=F,...)
 {
-  if (is.data.table(dt)) {
-    dt = setDF(copy(dt))
-  }
   if (!quiet) {
     if ("SubTreeFileSystem" %in% class(path)) {
       cat("Write s3", path$base_path, "\n")
