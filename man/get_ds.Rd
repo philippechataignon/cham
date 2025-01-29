@@ -18,5 +18,8 @@ selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fa
 Renvoie une liste de datasets RP EDL
 }
 \examples{
-ds_rp2015 <- get_ds(rp_edl_file(2015))
+ds2015 <- get_ds(rp_edl_files(2015))
+ds2015$pind |>
+  dplyr::count(wt=ipondi) |>
+  dplyr::collect()
 }

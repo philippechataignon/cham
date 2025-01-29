@@ -21,5 +21,8 @@ Renvoie une liste des tables duckdb du coffre RP EDL
 }
 \examples{
 conn <- get_conn()
-trp2015 <- get_tbl(conn, rp_edl_file(2015))
+trp2015 <- get_tbl(conn, rp_edl_files(2015))
+trp2015$pind |>
+  dplyr::count(wt=ipondi) |>
+  dplyr::collect()
 }
