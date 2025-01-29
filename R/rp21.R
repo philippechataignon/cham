@@ -82,7 +82,7 @@ get_rp21 <- function(conn)
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
 #' conn <- get_conn()
-#' trp2015 <- get_tbl(conn, rp_edl_file(2015))
+#' trp2015 <- get_tbl(conn, rp_edl_files(2015))
 #' @export
 rp_edl_files <- function(an)
 {
@@ -105,14 +105,18 @@ rp_edl_files <- function(an)
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
 #' conn <- get_conn()
-#' trp2015 <- get_tbl(conn, rp_edl_file(2015))
+#' trp2015 <- get_tbl(conn, rp_edl_files(2015))
+#' trp2015$pind |>
+#'   dplyr::count(wt=ipondi) |>
+#'   dplyr::collect()
 #' @export
 get_tbl <- function(conn, files)
 {
   lapply(
     files,
     function(file) {
-      dplyr::tbl(conn, glue::glue("read_parquet('{file}/*.parquet')"))
+      dplyr::tbl(conn, glue::glue("read_parquet('{file}/*.parquet')")) |>
+        dplyr::rename_with(tolower)
     }
   )
 }
@@ -123,7 +127,10 @@ get_tbl <- function(conn, files)
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
-#' ds_rp2015 <- get_ds(rp_edl_file(2015))
+#' ds2015 <- get_ds(rp_edl_files(2015))
+#' ds2015$pind |>
+#'   dplyr::count(wt=ipondi) |>
+#'   dplyr::collect()
 #' @export
 get_ds <- function(files)
 {
