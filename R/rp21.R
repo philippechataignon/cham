@@ -9,6 +9,12 @@ get_conn <- function(dbdir=":memory:") {
       bigint = "integer64"
     )
   }
+  if (Sys.getenv("SITE") == "ls3") {
+    DBI::dbExecute(conn, "
+      LOAD httpfs;
+      SET s3_url_style = 'path';
+    ")
+  }
   conn
 }
 
@@ -66,10 +72,6 @@ get_rp21_root <- function(conn, gen_root)
 get_rp21 <- function(conn)
 {
   if (Sys.getenv("SITE") == "ls3") {
-    DBI::dbExecute(conn, "
-      LOAD httpfs;
-      SET s3_url_style = 'path';
-    ")
     get_rp21_root(conn, "s3://mad/insee")
   } else {
     get_rp21_root(conn, "W:/")
@@ -100,7 +102,8 @@ rp_edl_files <- function(an)
 #' Renvoie une liste des tables duckdb du coffre RP EDL
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
 #' @param files : liste des fichiers obtenu par la fonction rp_edl_files(an) par
-#' exemple
+#' @param level : nombre de niveaux dans le cas de fichiers parquet partitionnés,
+#' par défaut 1 si pas de partionnement
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
@@ -110,12 +113,13 @@ rp_edl_files <- function(an)
 #'   dplyr::count(wt=ipondi) |>
 #'   dplyr::collect()
 #' @export
-get_tbl <- function(conn, files)
+get_tbl <- function(conn, files, level=1)
 {
   lapply(
     files,
     function(file) {
-      dplyr::tbl(conn, glue::glue("read_parquet('{file}/*.parquet')")) |>
+      niv <- paste0(rep('*/',level-1), collapse="")
+      dplyr::tbl(conn, glue::glue("read_parquet('{file}/{niv}/*.parquet')")) |>
         dplyr::rename_with(tolower)
     }
   )
@@ -140,4 +144,65 @@ get_ds <- function(files)
       arrow::open_dataset(file)
     }
   )
+}
+
+#' Renvoie une liste nommée à partir d'un pattern
+#' @param l : vecteur character
+#' @param pattern : pattern glue où "{x}" est remplacé par les valeurs de l
+#' @return Liste d'éléments nommés avec le pattern résolu pour chauqe valeur
+#' @examples
+#' extend(c("a", "b", "c"), "test{x}")
+#' @export
+extend <- function(l, pattern)
+{
+  ret = lapply(
+    l,
+    function(x) {
+      glue::glue(pattern)
+    }
+  )
+  names(ret) <- l
+  ret
+}
+
+
+#' Extensions RP
+#' @export
+rp_ext = c("pind", "plog", "cind", "clog", "cfam")
+
+#' Extensions EAR
+#' @export
+ear_ext = c("ind", "log", "fam", "liens")
+
+#' Renvoie une liste des fichiers EAR
+#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @note La variable d'environnement SITE doit être défini à 'ls3' ou 'aus'.
+#' Par défaut, 'aus'.
+#' @return Liste de 4 éléments nommés 'ind', 'log', 'fam', 'liens' pour être passée
+#' à `get_tbl` ou `get_ds` selon exemple ci-dessous
+#' @examples
+#' conn <- get_conn()
+#' tear <- get_tbl(conn, ear_files(), level=2)
+#' tear$ind |>
+#'   dplyr::group_by(an) |>
+#'   dplyr::count() |>
+#'   dplyr::arrange(an) |>
+#'   print()
+#'
+#' s3fs <- s3createfs()
+#' dsear = lapply(ear_files(), function(x) arrow::open_dataset(s3fs$path(substr(x, 6, nchar(x)))))
+#' dsear$ind |>
+#'   dplyr::group_by(an) |>
+#'   dplyr::count() |>
+#'   dplyr::arrange(an) |>
+#'   dplyr::collect() |>
+#'   print()
+#' @export
+ear_files <- function() {
+  if (Sys.getenv("SITE") == "ls3") {
+    s3fs
+    extend(ear_ext, "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}")
+  } else {
+    extend(ear_ext, "X:/HAB-MaD-SeRN/ear/{x}")
+  }
 }

@@ -4,13 +4,15 @@
 \alias{get_tbl}
 \title{Renvoie une liste des tables duckdb du coffre RP EDL}
 \usage{
-get_tbl(conn, files)
+get_tbl(conn, files, level = 1)
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
 
-\item{files}{: liste des fichiers obtenu par la fonction rp_edl_files(an) par
-exemple}
+\item{files}{: liste des fichiers obtenu par la fonction rp_edl_files(an) par}
+
+\item{level}{: nombre de niveaux dans le cas de fichiers parquet partitionnés,
+par défaut 1 si pas de partionnement}
 }
 \value{
 Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
