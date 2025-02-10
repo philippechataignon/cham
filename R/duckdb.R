@@ -10,15 +10,27 @@ ds_register <- function(conn, ds)
   )
 }
 
+#' Renvoit une table duckdb depuis un fichier parquet y.c S3
+#' @param conn : connexion duckdb
+#' @param path : chemin de la table/répertoire parquet
+#' @export
+tbl_pqt <- function(conn, path) {
+  dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
+}
+
+#' @export
+s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
+
+#' @export
+s3expl <- "s3://insee/sern-div-exploitations-statistiques-rp"
+
 #' Renvoit une table duckdb depuis S3 personnel
 #' @param conn : connexion duckdb
 #' @param path : chemin de la table/répertoire parquet
 #' @export
 tbl_s3 <- function(conn, path)
 {
-  dplyr::tbl(conn,
-    glue::glue("read_parquet('s3://travail/user-{Sys.getenv(\"IDEP\")}/{path}')")
-  )
+  tbl_pqt(conn, file.path(s3perso, path))
 }
 
 #' Renvoit une table duckdb depuis S3 exploitations stat
@@ -27,9 +39,7 @@ tbl_s3 <- function(conn, path)
 #' @export
 tbl_expl <- function(conn, path)
 {
-  dplyr::tbl(conn,
-    glue::glue("read_parquet('s3://insee/sern-div-exploitations-statistiques-rp/{path}')")
-  )
+  tbl_pqt(conn, file.path(s3expl, path))
 }
 
 #' Renvoie une connexion duckdb
@@ -52,4 +62,3 @@ get_conn <- function(dbdir=":memory:") {
   DBI::dbExecute(conn, "SET preserve_identifier_case = false")
   conn
 }
-
