@@ -1,4 +1,4 @@
-#' Traite un dataset arrow comme un table duckdb
+#' Traite un dataset arrow comme une table duckdb
 #' @param ds : dataset arrow
 #' @export
 ds_register <- function(conn, ds)
@@ -31,3 +31,25 @@ tbl_expl <- function(conn, path)
     glue::glue("read_parquet('s3://insee/sern-div-exploitations-statistiques-rp/{path}')")
   )
 }
+
+#' Renvoie une connexion duckdb
+#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
+#' @export
+get_conn <- function(dbdir=":memory:") {
+  if (!exists("conn") || !dbIsValid(conn)) {
+    conn = DBI::dbConnect(
+      duckdb::duckdb(),
+      dbdir = dbdir,
+      bigint = "integer64"
+    )
+  }
+  if (Sys.getenv("SITE") == "ls3") {
+    DBI::dbExecute(conn, "
+      LOAD httpfs;
+      SET s3_url_style = 'path';
+    ")
+  }
+  DBI::dbExecute(conn, "SET preserve_identifier_case = false")
+  conn
+}
+

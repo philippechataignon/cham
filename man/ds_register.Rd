@@ -2,7 +2,7 @@
 % Please edit documentation in R/duckdb.R
 \name{ds_register}
 \alias{ds_register}
-\title{Traite un dataset arrow comme un table duckdb}
+\title{Traite un dataset arrow comme une table duckdb}
 \usage{
 ds_register(conn, ds)
 }
@@ -10,5 +10,5 @@ ds_register(conn, ds)
 \item{ds}{: dataset arrow}
 }
 \description{
-Traite un dataset arrow comme un table duckdb
+Traite un dataset arrow comme une table duckdb
 }
