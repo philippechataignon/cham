@@ -13,9 +13,29 @@ ds_register <- function(conn, ds)
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
 #' @param conn : connexion duckdb
 #' @param path : chemin de la table/répertoire parquet
+#' @param tolower : si TRUE, le défaut, les variables sont converties
+#' en minuscules
 #' @export
-tbl_pqt <- function(conn, path) {
-  dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
+tbl_pqt <- function(conn, path, lowercase = TRUE) {
+  table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
+  if (lowercase) {
+    table <- rename_with(table, tolower)
+  }
+  table
+}
+
+#' Renvoit une liste de tables duckdb depuis une liste
+#' de chemin vers des fichiers/répertoires parquet
+#' @param conn : connexion duckdb
+#' @param liste : liste de chemins
+#' @export
+tbl_list <- function(conn, paths) {
+  lapply(
+    paths,
+    function(x) {
+      tbl_pqt(conn, x)
+    }
+  )
 }
 
 #' @export
