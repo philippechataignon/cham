@@ -27,8 +27,16 @@ write_duckdb_parquet(
 \item{verbose}{: indique la requete SQL générée}
 }
 \value{
-filename
+nom du fichier/répertoire
 }
 \description{
 Écrit fichier parquet depuis une table duckdb
+}
+\examples{
+s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
+# Fichier simple ear_fam.parquet
+outfile = write_duckdb_parquet(conn = conn, name="ear_fam", dir = s3expl)
+# Fichier partitionné dans répertoire test_fam
+outfile = write_duckdb_parquet(conn, name="ear_fam",  dir = s3expl,
+  filename="test_fam", partition="c_annee_col", verbose=T)
 }
