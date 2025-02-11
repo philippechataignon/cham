@@ -79,6 +79,5 @@ get_conn <- function(dbdir=":memory:") {
       SET s3_url_style = 'path';
     ")
   }
-  DBI::dbExecute(conn, "SET preserve_identifier_case = false")
   conn
 }
