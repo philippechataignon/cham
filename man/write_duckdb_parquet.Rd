@@ -10,6 +10,7 @@ write_duckdb_parquet(
   filename = NULL,
   dir = ".",
   partition = NULL,
+  order_by = NULL,
   verbose = FALSE
 )
 }
@@ -24,6 +25,8 @@ write_duckdb_parquet(
 
 \item{partition}{: chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
 
+\item{order_by}{: ordre éventuel de sortie sous forme de vecteur character}
+
 \item{verbose}{: indique la requete SQL générée}
 }
 \value{
@@ -34,8 +37,10 @@ nom du fichier/répertoire
 }
 \examples{
 s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
-# Fichier simple ear_fam.parquet
+# Fichier simple ear_fam.parquet dasn répertoire dir sous s3
 outfile = write_duckdb_parquet(conn = conn, name="ear_fam", dir = s3expl)
+# Fichier simple ear_fam.parquet trié dans répertoire courant
+outfile = write_duckdb_parquet(conn = conn, name="ear_fam", order_by=c("var1", "var2"))
 # Fichier partitionné dans répertoire test_fam
 outfile = write_duckdb_parquet(conn, name="ear_fam",  dir = s3expl,
   filename="test_fam", partition="c_annee_col", verbose=T)
