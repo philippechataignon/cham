@@ -1,15 +1,22 @@
-#' Traite un dataset arrow comme une table duckdb
-#' @param ds : dataset arrow
+#' Renvoie une connexion duckdb
+#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
 #' @export
-ds_register <- function(conn, ds)
-{
-    duckdb::duckdb_register_arrow(
-    conn = conn,
-    name = deparse(substitute(ds)),
-    arrow_scannable = ds
-  )
+get_conn <- function(dbdir=":memory:") {
+  if (!exists("conn") || !DBI::dbIsValid(conn)) {
+    conn = DBI::dbConnect(
+      duckdb::duckdb(),
+      dbdir = dbdir,
+      bigint = "integer64"
+    )
+  }
+  if (Sys.getenv("SITE") %in% c("ls3", "ssp")) {
+    DBI::dbExecute(conn, "
+      LOAD httpfs;
+      SET s3_url_style = 'path';
+    ")
+  }
+  conn
 }
-
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
 #' @param conn : connexion duckdb
 #' @param path : chemin de la table/répertoire parquet
@@ -62,22 +69,16 @@ tbl_expl <- function(conn, path)
   tbl_pqt(conn, file.path(s3expl, path))
 }
 
-#' Renvoie une connexion duckdb
-#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
+
+#' Traite un dataset arrow comme une table duckdb
+#' @param ds : dataset arrow
 #' @export
-get_conn <- function(dbdir=":memory:") {
-  if (!exists("conn") || !dbIsValid(conn)) {
-    conn = DBI::dbConnect(
-      duckdb::duckdb(),
-      dbdir = dbdir,
-      bigint = "integer64"
-    )
-  }
-  if (Sys.getenv("SITE") == "ls3") {
-    DBI::dbExecute(conn, "
-      LOAD httpfs;
-      SET s3_url_style = 'path';
-    ")
-  }
-  conn
+ds_register <- function(conn, ds)
+{
+    duckdb::duckdb_register_arrow(
+    conn = conn,
+    name = deparse(substitute(ds)),
+    arrow_scannable = ds
+  )
 }
+
