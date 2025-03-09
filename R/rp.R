@@ -95,8 +95,10 @@ get_rp <- function(conn, an=2021)
     stop("'an' doit valoir 2020 ou 2021")
   if (Sys.getenv("SITE") == "ls3") {
     get_func(conn, "s3://mad/insee")
-  } else {
+  } else if (Sys.getenv("SITE") == "aus") {
     get_func(conn, "W:/")
+  } else {
+    get_func(conn, "~/work/insee")
   }
 }
 
