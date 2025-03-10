@@ -85,20 +85,26 @@ get_rp21_root <- function(conn, gen_root)
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an=2021)
+get_rp <- function (conn, an = 2021)
 {
-  if (an == 2021)
-    get_func <- get_rp21_root
-  else if (an == 2020)
-    get_func <- get_rp20_root
-  else
+  if (! an %in% 2020:2021)
     stop("'an' doit valoir 2020 ou 2021")
+  site = Sys.getenv("SITE")
+  if (site %in% c("ls3", "aus")) {
+    if (an == 2021)
+      get_func <- get_rp21_root
+    else if (an == 2020)
+      get_func <- get_rp20_root
+  }
   if (Sys.getenv("SITE") == "ls3") {
     get_func(conn, "s3://mad/insee")
-  } else if (Sys.getenv("SITE") == "aus") {
+  }
+  else if (Sys.getenv("SITE") == "aus") {
     get_func(conn, "W:/")
-  } else {
-    get_func(conn, "~/work/insee")
+  }
+  else {
+    pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*",  fixed = T)
+    tbl_list(conn, extend(rp_ext, pat))
   }
 }
 
@@ -182,7 +188,7 @@ extend <- function(l, pattern)
   ret = lapply(
     l,
     function(x) {
-      glue::glue(pattern)
+        gsub('{x}', x, pattern, fixed = T)
     }
   )
   names(ret) <- l

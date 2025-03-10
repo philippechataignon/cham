@@ -45,11 +45,29 @@ tbl_list <- function(conn, paths) {
   )
 }
 
-#' @export
-s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
+get_s3perso <- function()
+{
+  site = Sys.getenv("SITE")
+  if (site == "ls3")
+    s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
+  else
+    s3perso <- "~/work/data"
+}
+
+get_s3expl <- function()
+{
+  site = Sys.getenv("SITE")
+  if (site == "ls3")
+    s3expl <- "s3://insee/sern-div-exploitations-statistiques-rp"
+  else
+    s3expl <- "~/work/insee"
+}
 
 #' @export
-s3expl <- "s3://insee/sern-div-exploitations-statistiques-rp"
+s3perso = get_s3perso()
+
+#' @export
+s3expl = get_s3expl()
 
 #' Renvoit une table duckdb depuis S3 personnel
 #' @param conn : connexion duckdb
