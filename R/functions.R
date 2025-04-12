@@ -47,7 +47,7 @@ download <- function(url, file, dir, force = FALSE)
 drop_temp <- function(DT)
 {
   set(DT, j = grep("^\\.", colnames(DT)), value = NULL)
-  DT
+  invisible(DT)
 }
 
 #' Récupère le timestamp actuel en secondes
