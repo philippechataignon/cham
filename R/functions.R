@@ -1,31 +1,55 @@
 #' Calcul taux évolution
+#' @param eff1: effectif initial
+#' @param eff2: effectif final
+#' @param nb_per: nombre de périodes
+#' @param pct: évolution en %, FALSE par défaut
+#' @param dec: nombre de décimales, par défaut toutes
 #' @export
-txevol <- function(pop1, pop2, nb_an, dec = 6)
+txevol <- function(eff1, eff2, nb_per, pct=F, dec=NA)
 {
-  fcase(
-        pop1 < 0, NA_real_,
-        pop2 < 0, NA_real_,
-        pop1 == 0, 0,
-        pop2 == 0, 0,
-        pop1 > 0, round(((pop2/pop1) ^ (1/nb_an) - 1) * 100, dec)
+  ret = fcase(
+        eff1 < 0, NA_real_,
+        eff2 < 0, NA_real_,
+        eff1 == 0, 0,
+        eff2 == 0, 0,
+        eff1 > 1, (eff2/eff1) ^ (1/nb_per) - 1
   )
+  if (pct)
+    ret = ret * 100
+  if (!is.na(dec))
+    ret = round(ret, dec)
+  ret
 }
 
 #' Calcul taux évolution d'un solde
+#' @param eff1: effectif initial
+#' @param eff2: effectif final
+#' @param solde: représente une composante de eff2 - eff1
+#' @param pct: évolution en %, FALSE par défaut
+#' @param dec: nombre de décimales, par défaut toutes
 #' @export
-txevol_solde <- function(pop1, pop2, evol, nb_an, dec = 6)
+txevol_solde <- function(eff1, eff2, solde, nb_per, pct=F, dec=NA)
 {
-  round(
-    fcase(
-      nb_an * pop1 == 0, 0,
-      pop1 == pop2, 100 * evol / (nb_an * pop1),
-      pop1 != pop2, txevol(pop1, pop2, nb_an) * evol / (pop2 - pop1)
-    ),
-  dec)
+  ret = fcase(
+    nb_an * eff1 == 0, 0,
+    eff1 == eff2, 100 * solde / (nb_per * eff1),
+    eff1 != eff2, txevol(eff1, eff2, nb_an) * solde / (eff2 - eff1)
+  )
+  if (pct)
+    ret = ret * 100
+  if (!is.na(dec))
+    ret = round(ret, dec)
+  ret
 }
 
 
 #' Télécharge un fichier si absent
+#' @param url: URL du fichier zip
+#' @param file: chemin du fichier destination, par défaut extrait de l'url
+#' @param dir: chemin du fichier destination, par défaut la variable
+#'   d'environnement DOWNLOAD_DIR si elle existe, sinon répertoire temporaire
+#' @param force: TRUE pour forcer le téléchargement même si le fichier existe,
+#'   FALSE par défaut
 #' @export
 download <- function(url, file, dir, force = FALSE)
 {
@@ -40,6 +64,33 @@ download <- function(url, file, dir, force = FALSE)
     cat(path, "present", "\n")
   }
   path
+}
+
+
+#' Télécharge et décompresse un csv zippé
+#' @param url: URL du fichier zip
+#' @param keep: TRUE pour conserver le zip téléchargé, FALSE par défaut
+#' @export
+downzip <- function(url, keep=F) {
+  zipfile = tempfile()
+  download.file(url=url, destfile=zipfile, method="curl")
+  biggest = zip::zip_list(zipfile) |>
+    arrange(compressed_size) |>
+    tail(1) |>
+    pull(filename)
+  ret = fread(cmd = paste("unzip -p", zipfile, biggest))
+  if (!keep)
+    unlink(zipfile)
+  ret
+}
+
+#' Récupère URL du fichier données melodi depuis un id source
+#' @param url: URL du fichier zip
+#' @export
+get_access_url <- function(url) {
+  rep = httr::GET(url, httr::accept_json()) |>
+    httr::content()
+  rep$product[[1]]$accessURL
 }
 
 #' Supprime les variables commençant par . dans un data.table

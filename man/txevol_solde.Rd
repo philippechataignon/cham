@@ -4,7 +4,18 @@
 \alias{txevol_solde}
 \title{Calcul taux évolution d'un solde}
 \usage{
-txevol_solde(pop1, pop2, evol, nb_an, dec = 6)
+txevol_solde(eff1, eff2, solde, nb_per, pct = F, dec = NA)
+}
+\arguments{
+\item{eff1:}{effectif initial}
+
+\item{eff2:}{effectif final}
+
+\item{solde:}{représente une composante de eff2 - eff1}
+
+\item{pct:}{évolution en \%, FALSE par défaut}
+
+\item{dec:}{nombre de décimales, par défaut toutes}
 }
 \description{
 Calcul taux évolution d'un solde

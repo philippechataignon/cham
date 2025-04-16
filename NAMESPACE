@@ -2,11 +2,13 @@
 
 export(arrondi_entier)
 export(download)
+export(downzip)
 export(drop_temp)
 export(ds_register)
 export(ear_ext)
 export(ear_files)
 export(extend)
+export(get_access_url)
 export(get_conn)
 export(get_ds)
 export(get_rp)

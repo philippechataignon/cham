@@ -6,6 +6,17 @@
 \usage{
 download(url, file, dir, force = FALSE)
 }
+\arguments{
+\item{url:}{URL du fichier zip}
+
+\item{file:}{chemin du fichier destination, par défaut extrait de l'url}
+
+\item{dir:}{chemin du fichier destination, par défaut la variable
+d'environnement DOWNLOAD_DIR si elle existe, sinon répertoire temporaire}
+
+\item{force:}{TRUE pour forcer le téléchargement même si le fichier existe,
+FALSE par défaut}
+}
 \description{
 Télécharge un fichier si absent
 }
