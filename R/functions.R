@@ -8,11 +8,12 @@
 txevol <- function(eff1, eff2, nb_per, pct=F, dec=NA)
 {
   ret = fcase(
-        eff1 < 0, NA_real_,
-        eff2 < 0, NA_real_,
-        eff1 == 0, 0,
-        eff2 == 0, 0,
-        eff1 > 1, (eff2/eff1) ^ (1/nb_per) - 1
+    nb_per == 0, NA_real_,
+    eff1 < 0, NA_real_,
+    eff2 < 0, NA_real_,
+    eff1 == 0, 0,
+    eff2 == 0, 0,
+    eff1 > 0, (eff2 / eff1) ^ (1 / nb_per) - 1
   )
   if (pct)
     ret = ret * 100
@@ -31,9 +32,11 @@ txevol <- function(eff1, eff2, nb_per, pct=F, dec=NA)
 txevol_solde <- function(eff1, eff2, solde, nb_per, pct=F, dec=NA)
 {
   ret = fcase(
-    nb_an * eff1 == 0, 0,
+    nb_per == 0, NA_real_,
+    eff1 == 0, 0,
+    eff2 == 0, 0,
     eff1 == eff2, 100 * solde / (nb_per * eff1),
-    eff1 != eff2, txevol(eff1, eff2, nb_an) * solde / (eff2 - eff1)
+    eff1 != eff2, txevol(eff1, eff2, nb_per) * solde / (eff2 - eff1)
   )
   if (pct)
     ret = ret * 100
