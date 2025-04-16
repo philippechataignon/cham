@@ -85,9 +85,10 @@ downzip <- function(url, keep=F) {
 }
 
 #' Récupère URL du fichier données melodi depuis un id source
-#' @param url: URL du fichier zip
+#' @param id: id du jeu de données, exemple DS_POPULATIONS_REFERENCE
 #' @export
-get_access_url <- function(url) {
+get_access_url <- function(id) {
+  url = paste0("https://api.insee.fr/melodi/catalog/", id)
   rep = httr::GET(url, httr::accept_json()) |>
     httr::content()
   rep$product[[1]]$accessURL

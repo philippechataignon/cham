@@ -4,10 +4,10 @@
 \alias{get_access_url}
 \title{Récupère URL du fichier données melodi depuis un id source}
 \usage{
-get_access_url(url)
+get_access_url(id)
 }
 \arguments{
-\item{url:}{URL du fichier zip}
+\item{id:}{id du jeu de données, exemple DS_POPULATIONS_REFERENCE}
 }
 \description{
 Récupère URL du fichier données melodi depuis un id source
