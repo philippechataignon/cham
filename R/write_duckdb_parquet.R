@@ -21,12 +21,11 @@ write_duckdb_parquet <- function(
   conn,
   name = NULL,
   filename = NULL,
-  dir=".",
+  dir = ".",
   partition = NULL,
   order_by = NULL,
   verbose = FALSE
-)
-{
+) {
   if (is.null(filename)) {
     filename = file.path(dir, paste0(name, ".parquet"))
   } else {
@@ -35,20 +34,21 @@ write_duckdb_parquet <- function(
   if (is.null(partition)) {
     partition_str = ""
   } else {
-    partition_str = glue::glue(", PARTITION_BY ({partition}), OVERWRITE_OR_IGNORE")
+    partition_str = glue::glue(
+      ", PARTITION_BY ({partition}), OVERWRITE_OR_IGNORE"
+    )
   }
   if (is.null(order_by)) {
     order_by = ""
   } else {
-    order_by = paste(" ORDER BY", paste0(order_by, collapse=','))
+    order_by = paste(" ORDER BY", paste0(order_by, collapse = ','))
   }
 
   cmd = glue::glue(
     "COPY (FROM {name} {order_by}) TO '{filename}'
     (FORMAT 'parquet', COMPRESSION 'zstd' {partition_str})"
   )
-  if (verbose)
-    cat(cmd, "\n")
+  if (verbose) cat(cmd, "\n")
   dbExecute(conn, cmd)
   filename
 }

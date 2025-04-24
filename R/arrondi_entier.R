@@ -4,14 +4,14 @@
 #' @param na.rm: supprime les valeurs manquantes si TRUE, FALSE par défaut
 #' @param verbose: si TRUE, affiche des informations sur le calcul
 #' @export
-arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F)
-{
+arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F) {
   if (!na.rm && any(is.na(x)))
-    stop("x ne doit pas contenir de NA. ",
-         "Utiliser na.rm = T pour ne pas tenir ",
-         "compte des valeurs manquantes")
-  if (any(x < 0))
-    stop("x ne doit contenir que des valeurs positives")
+    stop(
+      "x ne doit pas contenir de NA. ",
+      "Utiliser na.rm = T pour ne pas tenir ",
+      "compte des valeurs manquantes"
+    )
+  if (any(x < 0)) stop("x ne doit contenir que des valeurs positives")
   if (is.null(target)) {
     target <- round(sum(x, na.rm = na.rm))
   }

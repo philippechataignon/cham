@@ -1,73 +1,111 @@
-get_rp20_root <- function(conn, gen_root)
-{
+get_rp20_root <- function(conn, gen_root) {
   list(
-    pind = dplyr::tbl(conn, glue::glue("read_parquet([
+    pind = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
         '{gen_root}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    plog = dplyr::tbl(conn, glue::glue("read_parquet([
+    plog = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
         '{gen_root}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    cind = dplyr::tbl(conn, glue::glue("read_parquet([
+    cind = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
         '{gen_root}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    clog = dplyr::tbl(conn, glue::glue("read_parquet([
+    clog = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
         '{gen_root}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    cfam = dplyr::tbl(conn, glue::glue("read_parquet([
+    cfam = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
         '{gen_root}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower)
   )
 }
 
-get_rp21_root <- function(conn, gen_root)
-{
+get_rp21_root <- function(conn, gen_root) {
   list(
-    pind = dplyr::tbl(conn, glue::glue("read_parquet([
+    pind = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
         '{gen_root}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
         '{gen_root}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
         '{gen_root}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    plog = dplyr::tbl(conn, glue::glue("read_parquet([
+    plog = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
         '{gen_root}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    cind = dplyr::tbl(conn, glue::glue("read_parquet([
+    cind = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
         '{gen_root}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    clog = dplyr::tbl(conn, glue::glue("read_parquet([
+    clog = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
         '{gen_root}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower),
-    cfam = dplyr::tbl(conn, glue::glue("read_parquet([
+    cfam = dplyr::tbl(
+      conn,
+      glue::glue(
+        "read_parquet([
         '{gen_root}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
         '{gen_root}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
         ])"
-    )) |>
+      )
+    ) |>
       dplyr::rename_with(tolower)
   )
 }
@@ -85,25 +123,19 @@ get_rp21_root <- function(conn, gen_root)
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function (conn, an = 2021)
-{
-  if (! an %in% 2020:2021)
-    stop("'an' doit valoir 2020 ou 2021")
+get_rp <- function(conn, an = 2021) {
+  if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021")
   site = Sys.getenv("SITE")
   if (site %in% c("ls3", "aus")) {
-    if (an == 2021)
-      get_func <- get_rp21_root
-    else if (an == 2020)
+    if (an == 2021) get_func <- get_rp21_root else if (an == 2020)
       get_func <- get_rp20_root
   }
   if (Sys.getenv("SITE") == "ls3") {
     get_func(conn, "s3://mad/insee")
-  }
-  else if (Sys.getenv("SITE") == "aus") {
+  } else if (Sys.getenv("SITE") == "aus") {
     get_func(conn, "W:/")
-  }
-  else {
-    pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*",  fixed = T)
+  } else {
+    pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
     tbl_list(conn, extend(rp_ext, pat))
   }
 }
@@ -116,16 +148,25 @@ get_rp <- function (conn, an = 2021)
 #' conn <- get_conn()
 #' trp2015 <- get_tbl(conn, rp_edl_files(2015))
 #' @export
-rp_edl_files <- function(an)
-{
+rp_edl_files <- function(an) {
   an2 = an %% 100
   angeo2 = (an + 2) %% 100
   list(
-    "pind" = glue::glue("X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_ind{angeo2}"),
-    "plog" = glue::glue("X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_log{angeo2}"),
-    "cind" = glue::glue("X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_ind{angeo2}"),
-    "clog" = glue::glue("X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_log{angeo2}"),
-    "cfam" = glue::glue("X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_fam{angeo2}")
+    "pind" = glue::glue(
+      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_ind{angeo2}"
+    ),
+    "plog" = glue::glue(
+      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_log{angeo2}"
+    ),
+    "cind" = glue::glue(
+      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_ind{angeo2}"
+    ),
+    "clog" = glue::glue(
+      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_log{angeo2}"
+    ),
+    "cfam" = glue::glue(
+      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_fam{angeo2}"
+    )
   )
 }
 
@@ -143,12 +184,11 @@ rp_edl_files <- function(an)
 #'   dplyr::count(wt=ipondi) |>
 #'   dplyr::collect()
 #' @export
-get_tbl <- function(conn, files, level=1)
-{
+get_tbl <- function(conn, files, level = 1) {
   lapply(
     files,
     function(file) {
-      niv <- paste0(rep('*/',level-1), collapse="")
+      niv <- paste0(rep('*/', level - 1), collapse = "")
       dplyr::tbl(conn, glue::glue("read_parquet('{file}/{niv}/*.parquet')")) |>
         dplyr::rename_with(tolower)
     }
@@ -166,8 +206,7 @@ get_tbl <- function(conn, files, level=1)
 #'   dplyr::count(wt=ipondi) |>
 #'   dplyr::collect()
 #' @export
-get_ds <- function(files)
-{
+get_ds <- function(files) {
   lapply(
     files,
     function(file) {
@@ -183,12 +222,11 @@ get_ds <- function(files)
 #' @examples
 #' extend(c("a", "b", "c"), "test{x}")
 #' @export
-extend <- function(l, pattern)
-{
+extend <- function(l, pattern) {
   ret = lapply(
     l,
     function(x) {
-        gsub('{x}', x, pattern, fixed = T)
+      gsub('{x}', x, pattern, fixed = T)
     }
   )
   names(ret) <- l

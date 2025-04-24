@@ -5,20 +5,23 @@
 #' @param pct: évolution en %, FALSE par défaut
 #' @param dec: nombre de décimales, par défaut toutes
 #' @export
-txevol <- function(eff1, eff2, nb_per, pct=F, dec=NA)
-{
+txevol <- function(eff1, eff2, nb_per, pct = F, dec = NA) {
   ret = fcase(
-    nb_per == 0, NA_real_,
-    eff1 < 0, NA_real_,
-    eff2 < 0, NA_real_,
-    eff1 == 0, 0,
-    eff2 == 0, 0,
-    eff1 > 0, (eff2 / eff1) ^ (1 / nb_per) - 1
+    nb_per == 0,
+    NA_real_,
+    eff1 < 0,
+    NA_real_,
+    eff2 < 0,
+    NA_real_,
+    eff1 == 0,
+    0,
+    eff2 == 0,
+    0,
+    eff1 > 0,
+    (eff2 / eff1)^(1 / nb_per) - 1
   )
-  if (pct)
-    ret = ret * 100
-  if (!is.na(dec))
-    ret = round(ret, dec)
+  if (pct) ret = ret * 100
+  if (!is.na(dec)) ret = round(ret, dec)
   ret
 }
 
@@ -29,19 +32,21 @@ txevol <- function(eff1, eff2, nb_per, pct=F, dec=NA)
 #' @param pct: évolution en %, FALSE par défaut
 #' @param dec: nombre de décimales, par défaut toutes
 #' @export
-txevol_solde <- function(eff1, eff2, solde, nb_per, pct=F, dec=NA)
-{
+txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
   ret = fcase(
-    nb_per == 0, NA_real_,
-    eff1 == 0, 0,
-    eff2 == 0, 0,
-    eff1 == eff2, 100 * solde / (nb_per * eff1),
-    eff1 != eff2, txevol(eff1, eff2, nb_per) * solde / (eff2 - eff1)
+    nb_per == 0,
+    NA_real_,
+    eff1 == 0,
+    0,
+    eff2 == 0,
+    0,
+    eff1 == eff2,
+    100 * solde / (nb_per * eff1),
+    eff1 != eff2,
+    txevol(eff1, eff2, nb_per) * solde / (eff2 - eff1)
   )
-  if (pct)
-    ret = ret * 100
-  if (!is.na(dec))
-    ret = round(ret, dec)
+  if (pct) ret = ret * 100
+  if (!is.na(dec)) ret = round(ret, dec)
   ret
 }
 
@@ -54,12 +59,10 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct=F, dec=NA)
 #' @param force: TRUE pour forcer le téléchargement même si le fichier existe,
 #'   FALSE par défaut
 #' @export
-download <- function(url, file, dir, force = FALSE)
-{
-  if (missing(file))
-    file = basename(url)
+download <- function(url, file, dir, force = FALSE) {
+  if (missing(file)) file = basename(url)
   if (missing(dir))
-    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset=NA), tempdir())
+    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset = NA), tempdir())
   path = file.path(dir, file)
   if (force || !file.exists(path)) {
     ret = download.file(url, path)
@@ -74,16 +77,15 @@ download <- function(url, file, dir, force = FALSE)
 #' @param url: URL du fichier zip
 #' @param keep: TRUE pour conserver le zip téléchargé, FALSE par défaut
 #' @export
-downzip <- function(url, keep=F) {
+downzip <- function(url, keep = F) {
   zipfile = tempfile()
-  download.file(url=url, destfile=zipfile, method="curl")
+  download.file(url = url, destfile = zipfile, method = "curl")
   biggest = zip::zip_list(zipfile) |>
     arrange(compressed_size) |>
     tail(1) |>
     pull(filename)
   ret = fread(cmd = paste("unzip -p", zipfile, biggest))
-  if (!keep)
-    unlink(zipfile)
+  if (!keep) unlink(zipfile)
   ret
 }
 
@@ -99,15 +101,31 @@ get_access_url <- function(id) {
 
 #' Supprime les variables commençant par . dans un data.table
 #' @export
-drop_temp <- function(DT)
-{
+drop_temp <- function(DT) {
   set(DT, j = grep("^\\.", colnames(DT)), value = NULL)
   invisible(DT)
 }
 
 #' Récupère le timestamp actuel en secondes
 #' @export
-get_time <- function()
-{
+get_time <- function() {
   proc.time()["elapsed"]
+}
+
+#' Indique le site actuel
+#' @return Renvoit une des valeurs suivantes: "ls3", "ssp", "aus", "pc"
+#' @export
+get_site <- function() {
+  site = Sys.getenv("SITE")
+  user = Sys.getenv("USER")
+  if (site == "ssp") {
+    ret = "ssp"
+  } else if (site == "ls3" || user == "onyxia") {
+    ret = "ls3"
+  } else if (site == "aus" || site == "") {
+    ret = "aus"
+  } else {
+    ret = "pc"
+  }
+  ret
 }
