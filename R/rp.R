@@ -125,7 +125,7 @@ get_rp21_root <- function(conn, gen_root) {
 #' @export
 get_rp <- function(conn, an = 2021) {
   if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021")
-  site = Sys.getenv("SITE")
+  site = get_site()
   if (site %in% c("ls3", "aus")) {
     if (an == 2021) get_func <- get_rp21_root else if (an == 2020)
       get_func <- get_rp20_root
@@ -267,10 +267,12 @@ ear_ext = c("ind", "log", "fam", "liens")
 #'   print()
 #' @export
 ear_files <- function() {
-  if (Sys.getenv("SITE") == "ls3") {
-    s3fs
+  site = get_site()
+  if (site == "ls3") {
     extend(ear_ext, "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}")
-  } else {
+  } else if (site == "aus") {
     extend(ear_ext, "X:/HAB-MaD-SeRN/ear/{x}")
+  } else {
+    extend(ear_ext, "~/work/insee/ear/{x}")
   }
 }
