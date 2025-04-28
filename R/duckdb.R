@@ -13,9 +13,10 @@ get_conn <- function(dbdir = ":memory:") {
     DBI::dbExecute(
       conn,
       "
+      INSTALL httpfs;
       LOAD httpfs;
       SET s3_url_style = 'path';
-    "
+      "
     )
   }
   conn
