@@ -5,9 +5,8 @@
 \title{Écrit fichier parquet depuis une table duckdb}
 \usage{
 write_duckdb_parquet(
-  conn,
-  name = NULL,
-  filename = NULL,
+  table,
+  path = NULL,
   dir = ".",
   partition = NULL,
   order_by = NULL,
@@ -15,11 +14,9 @@ write_duckdb_parquet(
 )
 }
 \arguments{
-\item{conn}{: connexion duckdb}
+\item{table}{: table duckdb}
 
-\item{name}{: nom de la table}
-
-\item{filename}{: nom du fichier ou répertoire si partition est renseigné, par défaut \code{name}}
+\item{path}{: nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table}
 
 \item{dir}{: répertoire de sortie, éventuellement s3}
 
@@ -38,10 +35,10 @@ nom du fichier/répertoire
 \examples{
 s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
 # Fichier simple ear_fam.parquet dasn répertoire dir sous s3
-outfile = write_duckdb_parquet(conn = conn, name="ear_fam", dir = s3expl)
+outfile = write_duckdb_parquet(ear_fam, dir = s3expl)
 # Fichier simple ear_fam.parquet trié dans répertoire courant
-outfile = write_duckdb_parquet(conn = conn, name="ear_fam", order_by=c("var1", "var2"))
+outfile = write_duckdb_parquet(ear_fam, order_by=c("var1", "var2"))
 # Fichier partitionné dans répertoire test_fam
-outfile = write_duckdb_parquet(conn, name="ear_fam",  dir = s3expl,
+outfile = write_duckdb_parquet(ear_fam,  dir = s3expl,
   filename="test_fam", partition="c_annee_col", verbose=T)
 }
