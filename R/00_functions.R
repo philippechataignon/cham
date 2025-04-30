@@ -130,6 +130,12 @@ get_site <- function() {
   ret
 }
 
+
+#' Nom du site
+#'
+#' @export
+site = get_site()
+
 #' Renvoie une liste nommée à partir d'un pattern
 #' @param l : vecteur character
 #' @param pattern : pattern glue où "{x}" est remplacé par les valeurs de l

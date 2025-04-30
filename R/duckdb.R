@@ -73,8 +73,12 @@ if (site == "ls3") {
   s3expl <- "~/work/insee"
 }
 
+#' Bucket perso
+#' @name s3perso
 #' @export
 s3perso
 
+#' Bucket exploitations statistiques
+#' @name s3expl
 #' @export
 s3expl
