@@ -119,18 +119,13 @@ ear_ext = c("ind", "log", "fam", "liens")
 #' à `get_tbl` ou `get_ds` selon exemple ci-dessous
 #' @examples
 #' conn <- get_conn()
-#' tear <- tbl_pqt(conn, ear_files(), level=2)
-#' tear$ind |>
+#' t_ear <- tbl_pqt(conn, ear_files(), level=1)
+#' t_ear$ind |>
 #'   dplyr::group_by(an) |>
 #'   dplyr::count() |>
 #'   dplyr::arrange(an) |>
 #'   print()
 # @export
 ear_files <- function() {
-  if (site == "ls3") {
-    extend(ear_ext, "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}")
-  } else if (site == "aus") {
-  } else {
-    extend(ear_ext, "~/work/insee/ear/{x}")
-  }
+  extend(ear_ext, paths[[site]]$ear_root)
 }
