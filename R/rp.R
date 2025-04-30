@@ -1,7 +1,6 @@
-rp_files = list(
+rp_gen_files = list(
   "2020" = list(
-    pind =
-      "read_parquet([
+    pind = "read_parquet([
         '{x}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
         ])",
@@ -58,6 +57,11 @@ paths = list(
     "gen_root" = "W:/",
     "edl_root" = "X:/HAB-Pole-EDL-BasesRP",
     "ear_root" = "X:/HAB-MaD-SeRN/ear/{x}"
+  ),
+  pc = list(
+    "gen_root" = "'~/work/insee/rp/an={an}/{x}/*.parquet'",
+    "edl_root" = "~/work/insee/rp/an={an}",
+    "ear_root" = "~/work/insee/ear/{x}"
   )
 )
 
@@ -74,14 +78,26 @@ paths = list(
 #' @export
 get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
   src = match.arg(src)
+  if (src == "edl" && site == "pc") {
+    src = "gen"
+  }
   if (src == "gen") {
-    if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
+    if (!an %in% 2020:2021) {
+      stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
+    }
     root = paths[[site]]$gen_root
-    files = rp_files[[as.character(an)]]
-    # pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
+    if (site == "pc") {
+      pat = gsub('{an}', an, root, fixed = T)
+      files = extend(rp_ext, pat)
+    } else {
+      files = rp_gen_files[[as.character(an)]]
+    }
     ret = lapply(
-      gsub("{x}", root, files, fixed=T),
-      function(path) dplyr::tbl(conn, path)
+      gsub("{x}", root, files, fixed = T),
+      function(path) {
+        dplyr::tbl(conn, path) |>
+          dplyr::rename_with(tolower)
+      }
     )
     names(ret) = names(files)
   } else if (src == "edl") {
@@ -99,7 +115,7 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
       cvt[rp_ext],
       paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
     )
-    ret = tbl_list(conn, paths)
+    ret = tbl_list(conn, paths, lower = TRUE)
     names(ret) = rp_ext
   }
   ret

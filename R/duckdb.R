@@ -3,8 +3,10 @@
 #' @export
 get_conn <- function(dbdir = ":memory:") {
   # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
-  if ((!exists("conn") || !DBI::dbIsValid(conn)) ||
-      basename(conn@driver@dbdir) != dbdir) {
+  if (
+    (!exists("conn") || !DBI::dbIsValid(conn)) ||
+      basename(conn@driver@dbdir) != dbdir
+  ) {
     conn = DBI::dbConnect(
       duckdb::duckdb(),
       dbdir = dbdir,
@@ -40,7 +42,10 @@ tbl_pqt <- function(conn, path, level = 0, lower = FALSE) {
     table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
   } else {
     niv <- paste0(rep('*/', level), collapse = "")
-    table <- dplyr::tbl(conn, paste0("read_parquet('", path, "/", niv, "/*.parquet')"))
+    table <- dplyr::tbl(
+      conn,
+      paste0("read_parquet('", path, "/", niv, "/*.parquet')")
+    )
   }
   if (lower) {
     table <- rename_with(table, tolower)
