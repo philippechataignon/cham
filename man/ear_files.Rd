@@ -18,19 +18,10 @@ Renvoie une liste des fichiers EAR
 }
 \examples{
 conn <- get_conn()
-tear <- tbl_pqt(conn, ear_files(), level=2)
-tear$ind |>
+t_ear <- tbl_list(conn, ear_files(), level=1)
+t_ear$ind |>
   dplyr::group_by(an) |>
   dplyr::count() |>
   dplyr::arrange(an) |>
-  print()
-
-s3fs <- s3createfs()
-dsear = lapply(ear_files(), function(x) arrow::open_dataset(s3fs$path(substr(x, 6, nchar(x)))))
-dsear$ind |>
-  dplyr::group_by(an) |>
-  dplyr::count() |>
-  dplyr::arrange(an) |>
-  dplyr::collect() |>
   print()
 }

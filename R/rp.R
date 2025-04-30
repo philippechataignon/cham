@@ -119,13 +119,13 @@ ear_ext = c("ind", "log", "fam", "liens")
 #' à `get_tbl` ou `get_ds` selon exemple ci-dessous
 #' @examples
 #' conn <- get_conn()
-#' t_ear <- tbl_pqt(conn, ear_files(), level=1)
+#' t_ear <- tbl_list(conn, ear_files(), level=1)
 #' t_ear$ind |>
 #'   dplyr::group_by(an) |>
 #'   dplyr::count() |>
 #'   dplyr::arrange(an) |>
 #'   print()
-# @export
+#' @export
 ear_files <- function() {
   extend(ear_ext, paths[[site]]$ear_root)
 }
