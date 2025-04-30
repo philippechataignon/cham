@@ -1,114 +1,60 @@
-get_rp20_root <- function(conn, gen_root) {
-  list(
-    pind = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
-        '{gen_root}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
+rp_files = list(
+  "2020" = list(
+    pind =
+      "read_parquet([
+        '{x}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
+        '{x}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
+        ])",
+    plog = "read_parquet([
+        '{x}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
+        '{x}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
+        ])",
+    cind = "read_parquet([
+        '{x}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
+        '{x}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
+        ])",
+    clog = "read_parquet([
+        '{x}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
+        '{x}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
+        ])",
+    cfam = "read_parquet([
+        '{x}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
+        '{x}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
         ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    plog = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
-        '{gen_root}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    cind = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
-        '{gen_root}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    clog = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
-        '{gen_root}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    cfam = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
-        '{gen_root}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower)
+  ),
+  "2021" = list(
+    pind = "read_parquet([
+      '{x}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
+      '{x}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
+      '{x}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
+      '{x}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
+      ])",
+    plog = "read_parquet([
+      '{x}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
+      '{x}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
+      ])",
+    cind = "read_parquet([
+      '{x}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
+      '{x}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
+      ])",
+    clog = "read_parquet([
+      '{x}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
+      '{x}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
+      ])",
+    cfam = "read_parquet([
+      '{x}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
+      '{x}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
+      ])"
   )
-}
+)
 
-get_rp21_root <- function(conn, gen_root) {
-  list(
-    pind = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
-        '{gen_root}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
-        '{gen_root}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
-        '{gen_root}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    plog = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
-        '{gen_root}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    cind = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
-        '{gen_root}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    clog = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
-        '{gen_root}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower),
-    cfam = dplyr::tbl(
-      conn,
-      glue::glue(
-        "read_parquet([
-        '{gen_root}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
-        '{gen_root}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
-        ])"
-      )
-    ) |>
-      dplyr::rename_with(tolower)
+paths = list(
+  ls3 = list(
+    "gen_root" = "s3://mad/insee",
+    "edl_root" = "s3://insee/sern-div-exploitations-statistiques-rp/edl",
+    "ear_root" = "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}"
   )
-}
+)
 
 #' Renvoie une liste des tables du RP21
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
@@ -125,21 +71,14 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
   src = match.arg(src)
   if (src == "gen") {
     if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
-    if (site %in% c("ls3", "aus")) {
-      if (an == 2021) {
-        get_func <- get_rp21_root}
-      else if (an == 2020) {
-        get_func <- get_rp20_root
-      }
-    }
-    if (site == "ls3") {
-      ret = get_func(conn, "s3://mad/insee")
-    } else if (site == "aus") {
-      ret = get_func(conn, "W:/")
-    } else {
-      pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
-      ret = tbl_list(conn, extend(rp_ext, pat))
-    }
+    root = paths[[site]]$gen_root
+    files = rp_files[[as.character(an)]]
+    # pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
+    ret = lapply(
+      gsub("{x}", root, files, fixed=T),
+      function(path) dplyr::tbl(conn, path)
+    )
+    names(ret) = names(files)
   } else if (src == "edl") {
     an2 = an %% 100
     angeo2 = (an + 2) %% 100
