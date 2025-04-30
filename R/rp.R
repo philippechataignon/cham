@@ -53,6 +53,11 @@ paths = list(
     "gen_root" = "s3://mad/insee",
     "edl_root" = "s3://insee/sern-div-exploitations-statistiques-rp/edl",
     "ear_root" = "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}"
+  ),
+  aus = list(
+    "gen_root" = "W:/",
+    "edl_root" = "X:/HAB-Pole-EDL-BasesRP",
+    "ear_root" = "X:/HAB-MaD-SeRN/ear/{x}"
   )
 )
 
@@ -89,11 +94,7 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
       "clog" = "compl_log",
       "cfam" = "compl_fam"
     )
-    if (site == "aus"){
-      root = "X:/HAB-Pole-EDL-BasesRP"
-    } else if (site == "ls3") {
-      root = "s3://insee/sern-div-exploitations-statistiques-rp/edl"
-    }
+    root = paths[[site]]$edl_root
     paths = extend(
       cvt[rp_ext],
       paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
@@ -124,21 +125,11 @@ ear_ext = c("ind", "log", "fam", "liens")
 #'   dplyr::count() |>
 #'   dplyr::arrange(an) |>
 #'   print()
-#'
-#' s3fs <- s3createfs()
-#' dsear = lapply(ear_files(), function(x) arrow::open_dataset(s3fs$path(substr(x, 6, nchar(x)))))
-#' dsear$ind |>
-#'   dplyr::group_by(an) |>
-#'   dplyr::count() |>
-#'   dplyr::arrange(an) |>
-#'   dplyr::collect() |>
-#'   print()
-#' @export
+# @export
 ear_files <- function() {
   if (site == "ls3") {
     extend(ear_ext, "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}")
   } else if (site == "aus") {
-    extend(ear_ext, "X:/HAB-MaD-SeRN/ear/{x}")
   } else {
     extend(ear_ext, "~/work/insee/ear/{x}")
   }
