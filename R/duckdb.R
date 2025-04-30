@@ -2,14 +2,16 @@
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
 #' @export
 get_conn <- function(dbdir = ":memory:") {
-  if (!exists("conn") || !DBI::dbIsValid(conn)) {
+  # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
+  if ((!exists("conn") || !DBI::dbIsValid(conn)) ||
+      basename(conn@driver@dbdir) != dbdir) {
     conn = DBI::dbConnect(
       duckdb::duckdb(),
       dbdir = dbdir,
       bigint = "integer64"
     )
   }
-  if (Sys.getenv("SITE") %in% c("ls3", "ssp")) {
+  if (site %in% c("ls3", "ssp")) {
     DBI::dbExecute(
       conn,
       "
