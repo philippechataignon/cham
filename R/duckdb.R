@@ -24,27 +24,34 @@ get_conn <- function(dbdir = ":memory:") {
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
 #' @param conn : connexion duckdb
 #' @param path : chemin de la table/répertoire parquet
-#' @param tolower : si TRUE, le défaut, les variables sont converties
-#' en minuscules
+#' @param level : nombre de niveaux dans le cas de fichiers parquet partitionnés,
+#' par défaut 0 si pas de partionnement
+#' @param lower : si TRUE, les variables sont converties en minuscules
+#' @return Liste de tables duckdb
 #' @export
-tbl_pqt <- function(conn, path, lowercase = TRUE) {
-  table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
-  if (lowercase) {
+tbl_pqt <- function(conn, path, level = 0, lower = FALSE) {
+  if (level == 0) {
+    table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
+  } else {
+    niv <- paste0(rep('*/', level), collapse = "")
+    table <- dplyr::tbl(conn, paste0("read_parquet('", path, "/", niv, "/*.parquet')"))
+  }
+  if (lower) {
     table <- rename_with(table, tolower)
   }
   table
 }
 
 #' Renvoit une liste de tables duckdb depuis une liste
-#' de chemin vers des fichiers/répertoires parquet
+#' des chemin vers des fichiers/répertoires parquet
 #' @param conn : connexion duckdb
 #' @param liste : liste de chemins
 #' @export
-tbl_list <- function(conn, paths) {
+tbl_list <- function(conn, paths, level = 0, lower = FALSE) {
   lapply(
     paths,
     function(x) {
-      tbl_pqt(conn, x)
+      tbl_pqt(conn, x, level, lower)
     }
   )
 }

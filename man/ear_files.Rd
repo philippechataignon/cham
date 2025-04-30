@@ -22,7 +22,7 @@ Par défaut, 'aus'.
 }
 \examples{
 conn <- get_conn()
-tear <- get_tbl(conn, ear_files(), level=2)
+tear <- tbl_pqt(conn, ear_files(), level=2)
 tear$ind |>
   dplyr::group_by(an) |>
   dplyr::count() |>

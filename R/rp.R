@@ -146,7 +146,7 @@ get_rp <- function(conn, an = 2021) {
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
 #' conn <- get_conn()
-#' trp2015 <- get_tbl(conn, rp_edl_files(2015))
+#' trp2015 <- tbl_pqt(conn, rp_edl_files(2015))
 #' @export
 rp_edl_files <- function(an) {
   an2 = an %% 100
@@ -167,31 +167,6 @@ rp_edl_files <- function(an) {
     "cfam" = glue::glue(
       "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_fam{angeo2}"
     )
-  )
-}
-
-#' Renvoie une liste des tables duckdb du coffre RP EDL
-#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
-#' @param files : liste des fichiers obtenu par la fonction rp_edl_files(an) par
-#' @param level : nombre de niveaux dans le cas de fichiers parquet partitionnés,
-#' par défaut 1 si pas de partionnement
-#' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
-#' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
-#' @examples
-#' conn <- get_conn()
-#' trp2015 <- get_tbl(conn, rp_edl_files(2015))
-#' trp2015$pind |>
-#'   dplyr::count(wt=ipondi) |>
-#'   dplyr::collect()
-#' @export
-get_tbl <- function(conn, files, level = 1) {
-  lapply(
-    files,
-    function(file) {
-      niv <- paste0(rep('*/', level - 1), collapse = "")
-      dplyr::tbl(conn, glue::glue("read_parquet('{file}/{niv}/*.parquet')")) |>
-        dplyr::rename_with(tolower)
-    }
   )
 }
 
@@ -250,7 +225,7 @@ ear_ext = c("ind", "log", "fam", "liens")
 #' à `get_tbl` ou `get_ds` selon exemple ci-dessous
 #' @examples
 #' conn <- get_conn()
-#' tear <- get_tbl(conn, ear_files(), level=2)
+#' tear <- tbl_pqt(conn, ear_files(), level=2)
 #' tear$ind |>
 #'   dplyr::group_by(an) |>
 #'   dplyr::count() |>

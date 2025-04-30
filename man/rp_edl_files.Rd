@@ -18,5 +18,5 @@ Renvoie une liste des noms de fichiers parquet du coffre RP EDL
 }
 \examples{
 conn <- get_conn()
-trp2015 <- get_tbl(conn, rp_edl_files(2015))
+trp2015 <- tbl_pqt(conn, rp_edl_files(2015))
 }
