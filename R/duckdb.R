@@ -30,6 +30,10 @@ get_conn <- function(dbdir = ":memory:") {
 #' @return Liste de tables duckdb
 #' @export
 tbl_pqt <- function(conn, path, level = 0, lower = FALSE) {
+  # si path se termine par un /, alors on ajoute *.parquet
+  if (level == 0 && substr(path, nchar(path), nchar(path)) == "/") {
+    path = paste0(path, "*.parquet")
+  }
   if (level == 0) {
     table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
   } else {
