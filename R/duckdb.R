@@ -48,7 +48,7 @@ tbl_pqt <- function(conn, path, level = 0, lower = FALSE) {
     )
   }
   if (lower) {
-    table <- rename_with(table, tolower)
+    table <- dplyr::rename_with(table, tolower)
   }
   table
 }
