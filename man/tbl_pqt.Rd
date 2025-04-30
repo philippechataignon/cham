@@ -4,15 +4,20 @@
 \alias{tbl_pqt}
 \title{Renvoit une table duckdb depuis un fichier parquet y.c S3}
 \usage{
-tbl_pqt(conn, path, lowercase = TRUE)
+tbl_pqt(conn, path, level = 0, lower = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb}
 
 \item{path}{: chemin de la table/répertoire parquet}
 
-\item{tolower}{: si TRUE, le défaut, les variables sont converties
-en minuscules}
+\item{level}{: nombre de niveaux dans le cas de fichiers parquet partitionnés,
+par défaut 0 si pas de partionnement}
+
+\item{lower}{: si TRUE, les variables sont converties en minuscules}
+}
+\value{
+Liste de tables duckdb
 }
 \description{
 Renvoit une table duckdb depuis un fichier parquet y.c S3

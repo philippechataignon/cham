@@ -129,3 +129,21 @@ get_site <- function() {
   }
   ret
 }
+
+#' Renvoie une liste nommée à partir d'un pattern
+#' @param l : vecteur character
+#' @param pattern : pattern glue où "{x}" est remplacé par les valeurs de l
+#' @return Liste d'éléments nommés avec le pattern résolu pour chauqe valeur
+#' @examples
+#' extend(c("a", "b", "c"), "test{x}")
+#' @export
+extend <- function(l, pattern) {
+  ret = lapply(
+    l,
+    function(x) {
+      gsub('{x}', x, pattern, fixed = T)
+    }
+  )
+  names(ret) <- l
+  ret
+}

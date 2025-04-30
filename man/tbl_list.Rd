@@ -3,9 +3,9 @@
 \name{tbl_list}
 \alias{tbl_list}
 \title{Renvoit une liste de tables duckdb depuis une liste
-de chemin vers des fichiers/répertoires parquet}
+de chemins vers des fichiers/répertoires parquet}
 \usage{
-tbl_list(conn, paths)
+tbl_list(conn, paths, level = 0, lower = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb}
@@ -14,5 +14,5 @@ tbl_list(conn, paths)
 }
 \description{
 Renvoit une liste de tables duckdb depuis une liste
-de chemin vers des fichiers/répertoires parquet
+de chemins vers des fichiers/répertoires parquet
 }

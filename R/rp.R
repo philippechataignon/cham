@@ -123,91 +123,48 @@ get_rp21_root <- function(conn, gen_root) {
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an = 2021) {
-  if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021")
+get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
+  src = match.arg(src)
   site = get_site()
-  if (site %in% c("ls3", "aus")) {
-    if (an == 2021) get_func <- get_rp21_root else if (an == 2020)
-      get_func <- get_rp20_root
-  }
-  if (Sys.getenv("SITE") == "ls3") {
-    get_func(conn, "s3://mad/insee")
-  } else if (Sys.getenv("SITE") == "aus") {
-    get_func(conn, "W:/")
-  } else {
-    pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
-    tbl_list(conn, extend(rp_ext, pat))
-  }
-}
-
-#' Renvoie une liste des noms de fichiers parquet du coffre RP EDL
-#' @param an : année du RP, exemple 2015
-#' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
-#' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
-#' @examples
-#' conn <- get_conn()
-#' trp2015 <- tbl_pqt(conn, rp_edl_files(2015))
-#' @export
-rp_edl_files <- function(an) {
-  an2 = an %% 100
-  angeo2 = (an + 2) %% 100
-  list(
-    "pind" = glue::glue(
-      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_ind{angeo2}"
-    ),
-    "plog" = glue::glue(
-      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/prin_log{angeo2}"
-    ),
-    "cind" = glue::glue(
-      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_ind{angeo2}"
-    ),
-    "clog" = glue::glue(
-      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_log{angeo2}"
-    ),
-    "cfam" = glue::glue(
-      "X:/HAB-Pole-EDL-BasesRP/RP{an2}/PARQUET/compl_fam{angeo2}"
+  if (src == "gen") {
+    if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
+    if (site %in% c("ls3", "aus")) {
+      if (an == 2021) {
+        get_func <- get_rp21_root}
+      else if (an == 2020) {
+        get_func <- get_rp20_root
+      }
+    }
+    if (site == "ls3") {
+      ret = get_func(conn, "s3://mad/insee")
+    } else if (Sys.getenv("SITE") == "aus") {
+      ret = get_func(conn, "W:/")
+    } else {
+      pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
+      ret = tbl_list(conn, extend(rp_ext, pat))
+    }
+  } else if (src == "edl") {
+    an2 = an %% 100
+    angeo2 = (an + 2) %% 100
+    cvt = list(
+      "pind" = "prin_ind",
+      "plog" = "prin_log",
+      "cind" = "compl_ind",
+      "clog" = "compl_log",
+      "cfam" = "compl_fam"
     )
-  )
-}
-
-#' Renvoie une liste de datasets RP EDL
-#' @param files : liste des fichiers obtenu par la fonction rp_edl_files(an) par
-#' exemple
-#' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
-#' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
-#' @examples
-#' ds2015 <- get_ds(rp_edl_files(2015))
-#' ds2015$pind |>
-#'   dplyr::count(wt=ipondi) |>
-#'   dplyr::collect()
-#' @export
-get_ds <- function(files) {
-  lapply(
-    files,
-    function(file) {
-      arrow::open_dataset(file)
+    if (site == "aus"){
+      root = "X:/HAB-Pole-EDL-BasesRP"
     }
-  )
-}
-
-#' Renvoie une liste nommée à partir d'un pattern
-#' @param l : vecteur character
-#' @param pattern : pattern glue où "{x}" est remplacé par les valeurs de l
-#' @return Liste d'éléments nommés avec le pattern résolu pour chauqe valeur
-#' @examples
-#' extend(c("a", "b", "c"), "test{x}")
-#' @export
-extend <- function(l, pattern) {
-  ret = lapply(
-    l,
-    function(x) {
-      gsub('{x}', x, pattern, fixed = T)
-    }
-  )
-  names(ret) <- l
+    paths = extend(
+      cvt[rp_ext],
+      paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
+    )
+    ret = tbl_list(conn, paths)
+    names(ret) = rp_ext
+  }
   ret
 }
-
 
 #' Extensions RP
 #' @export
