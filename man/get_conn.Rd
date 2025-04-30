@@ -4,7 +4,7 @@
 \alias{get_conn}
 \title{Renvoie une connexion duckdb}
 \usage{
-get_conn(dbdir = ":memory:")
+get_conn(dbdir = ":memory")
 }
 \arguments{
 \item{dbdir}{: nom du la base duckdb, par défaut base stockée en mémoire}

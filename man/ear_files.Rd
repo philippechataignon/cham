@@ -16,10 +16,6 @@ Liste de 4 éléments nommés 'ind', 'log', 'fam', 'liens' pour être passée
 \description{
 Renvoie une liste des fichiers EAR
 }
-\note{
-La variable d'environnement SITE doit être défini à 'ls3' ou 'aus'.
-Par défaut, 'aus'.
-}
 \examples{
 conn <- get_conn()
 tear <- tbl_pqt(conn, ear_files(), level=2)

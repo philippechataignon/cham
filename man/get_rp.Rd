@@ -16,10 +16,6 @@ selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fa
 \description{
 Renvoie une liste des tables du RP21
 }
-\note{
-La variable d'environnement SITE doit être défini à 'ls3' ou 'aus'.
-Par défaut, 'aus'.
-}
 \examples{
 conn <- get_conn()
 trp21 <- get_rp21(conn)

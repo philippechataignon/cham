@@ -112,8 +112,6 @@ get_rp21_root <- function(conn, gen_root) {
 
 #' Renvoie une liste des tables du RP21
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
-#' @note La variable d'environnement SITE doit être défini à 'ls3' ou 'aus'.
-#' Par défaut, 'aus'.
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
@@ -125,7 +123,6 @@ get_rp21_root <- function(conn, gen_root) {
 #' @export
 get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
   src = match.arg(src)
-  site = get_site()
   if (src == "gen") {
     if (!an %in% 2020:2021) stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
     if (site %in% c("ls3", "aus")) {
@@ -137,7 +134,7 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
     }
     if (site == "ls3") {
       ret = get_func(conn, "s3://mad/insee")
-    } else if (Sys.getenv("SITE") == "aus") {
+    } else if (site == "aus") {
       ret = get_func(conn, "W:/")
     } else {
       pat = gsub('{an}', an, "~/work/insee/rp/an={an}/{x}/*", fixed = T)
@@ -155,6 +152,8 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
     )
     if (site == "aus"){
       root = "X:/HAB-Pole-EDL-BasesRP"
+    } else if (site == "ls3") {
+      root = "s3://insee/sern-div-exploitations-statistiques-rp/edl"
     }
     paths = extend(
       cvt[rp_ext],
@@ -176,8 +175,6 @@ ear_ext = c("ind", "log", "fam", "liens")
 
 #' Renvoie une liste des fichiers EAR
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
-#' @note La variable d'environnement SITE doit être défini à 'ls3' ou 'aus'.
-#' Par défaut, 'aus'.
 #' @return Liste de 4 éléments nommés 'ind', 'log', 'fam', 'liens' pour être passée
 #' à `get_tbl` ou `get_ds` selon exemple ci-dessous
 #' @examples
@@ -199,7 +196,6 @@ ear_ext = c("ind", "log", "fam", "liens")
 #'   print()
 #' @export
 ear_files <- function() {
-  site = get_site()
   if (site == "ls3") {
     extend(ear_ext, "s3://insee/sern-div-exploitations-statistiques-rp/ear/{x}")
   } else if (site == "aus") {
