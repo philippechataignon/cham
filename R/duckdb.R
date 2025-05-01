@@ -33,20 +33,25 @@ get_conn <- function(dbdir = ":memory:") {
 #' @param lower : si TRUE, les variables sont converties en minuscules
 #' @return Liste de tables duckdb
 #' @export
-tbl_pqt <- function(conn, path, level = 0, lower = FALSE) {
-  # si path se termine par un /, alors on ajoute *.parquet
-  if (level == 0 && substr(path, nchar(path), nchar(path)) == "/") {
-    path = paste0(path, "*.parquet")
+
+tbl_pqt <- function(conn, path, level = 0, lower = FALSE, verbose = FALSE) {
+  # si les paths se terminent par un /, alors on ajoute *.parquet
+  if (
+    level > 0 ||
+      (level == 0 && all(substr(path, nchar(path), nchar(path)) == "/"))
+  ) {
+    niv <- paste0(rep('/*', level + 1), collapse = "")
+    path <- paste0(path, niv)
   }
-  if (level == 0) {
-    table <- dplyr::tbl(conn, paste0("read_parquet('", path, "')"))
-  } else {
-    niv <- paste0(rep('*/', level), collapse = "")
-    table <- dplyr::tbl(
-      conn,
-      paste0("read_parquet('", path, "/", niv, "/*.parquet')")
-    )
+  cmd <- paste0(
+    "read_parquet([",
+    paste(paste0("'", path, "'"), collapse = ","),
+    "])"
+  )
+  if (verbose) {
+    cat(cmd, "\n")
   }
+  table <- dplyr::tbl(conn, cmd)
   if (lower) {
     table <- dplyr::rename_with(table, tolower)
   }
