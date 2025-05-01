@@ -63,11 +63,11 @@ tbl_pqt <- function(conn, path, level = 0, lower = FALSE, verbose = FALSE) {
 #' @param conn : connexion duckdb
 #' @param liste : liste de chemins
 #' @export
-tbl_list <- function(conn, paths, level = 0, lower = FALSE) {
+tbl_list <- function(conn, paths, level = 0, lower = FALSE, verbose = FALSE) {
   lapply(
     paths,
     function(x) {
-      tbl_pqt(conn, x, level, lower)
+      tbl_pqt(conn, x, level, lower, verbose)
     }
   )
 }
