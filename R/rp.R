@@ -60,7 +60,6 @@ paths = list(
   ),
   pc = list(
     "gen_root" = "~/work/insee/rp/an={an}/{x}/",
-    "edl_root" = "~/work/insee/rp/an={an}",
     "ear_root" = "~/work/insee/ear/{x}"
   )
 )
