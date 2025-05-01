@@ -1,48 +1,48 @@
 rp_gen_files = list(
   "2020" = list(
     pind = c(
-        '{x}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
-        '{x}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
+        '{root}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
+        '{root}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
         ),
     plog = c(
-        '{x}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
-        '{x}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
+        '{root}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
+        '{root}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
         ),
     cind = c(
-        '{x}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
-        '{x}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
+        '{root}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
+        '{root}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
         ),
     clog = c(
-        '{x}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
-        '{x}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
+        '{root}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
+        '{root}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
         ),
     cfam = c(
-        '{x}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
-        '{x}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
+        '{root}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
+        '{root}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
         )
   ),
   "2021" = list(
     pind = c(
-      '{x}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
-      '{x}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
-      '{x}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
-      '{x}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
+      '{root}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
+      '{root}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
+      '{root}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
+      '{root}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
     ),
     plog = c(
-      '{x}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
-      '{x}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
+      '{root}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
     ),
     cind = c(
-      '{x}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
-      '{x}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
+      '{root}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
     ),
     clog = c(
-      '{x}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
-      '{x}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
+      '{root}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
     ),
     cfam = c(
-      '{x}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
-      '{x}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
+      '{root}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
     )
   )
 )
@@ -86,9 +86,12 @@ get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
     root = paths[[site]]$gen_root
     if (site == "pc") {
       pat = gsub('{an}', an, root, fixed = T)
-      paths = extend(rp_ext, pat)
+      files = extend(rp_ext, pat)
     } else {
-      paths = rp_gen_files[[as.character(an)]]
+      files = lapply(
+        rp_gen_files[[as.character(an)]],
+        function(x) gsub('{root}', root, x, fixed = T)
+      )
     }
   # edl ----
   } else if (src == "edl") {
@@ -102,13 +105,13 @@ get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
       "cfam" = "compl_fam"
     )
     root = paths[[site]]$edl_root
-    paths = extend(
+    files = extend(
       cvt[rp_ext],
       paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
     )
-    names(paths) = names(cvt)
+    names(files) = names(cvt)
   }
-  tbl_list(conn, paths, lower = TRUE, verbose = verbose)
+  tbl_list(conn, files, lower = TRUE, verbose = verbose)
 }
 
 #' Extensions RP
