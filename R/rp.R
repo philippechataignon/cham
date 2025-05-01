@@ -83,17 +83,22 @@ get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
   # gen ----
   if (src == "gen") {
     root = paths[[site]]$gen_root
-    if (site == "pc") {
-      pat = gsub('{an}', an, root, fixed = T)
-      files = extend(rp_ext, pat)
-    } else {
+    if (site %in% c("ls3", "aus")) {
       files = lapply(
         rp_gen_files[[as.character(an)]],
         function(x) gsub('{root}', root, x, fixed = T)
       )
+    } else if (site == "pc") {
+      pat = gsub('{an}', an, root, fixed = T)
+      files = extend(rp_ext, pat)
+    } else {
+      stop("src non présente sur ce site")
     }
   # edl ----
   } else if (src == "edl") {
+    if (!site %in% c("ls3", "aus")) {
+      stop("src non présente sur ce site")
+    }
     an2 = an %% 100
     angeo2 = (an + 2) %% 100
     cvt = list(
