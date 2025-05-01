@@ -1,49 +1,49 @@
 rp_gen_files = list(
   "2020" = list(
-    pind = "read_parquet([
+    pind = c(
         '{x}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
-        ])",
-    plog = "read_parquet([
+        ),
+    plog = c(
         '{x}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
-        ])",
-    cind = "read_parquet([
+        ),
+    cind = c(
         '{x}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
-        ])",
-    clog = "read_parquet([
+        ),
+    clog = c(
         '{x}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
-        ])",
-    cfam = "read_parquet([
+        ),
+    cfam = c(
         '{x}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
         '{x}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
-        ])"
+        )
   ),
   "2021" = list(
-    pind = "read_parquet([
+    pind = c(
       '{x}/A100021/GEN_A1000214_DIMETAPARQUET/META.parquet',
       '{x}/A100021/GEN_A1000214_DIMETBPARQUET/METB.parquet',
       '{x}/A100021/GEN_A1000214_DIMETCPARQUET/METC.parquet',
       '{x}/A100021/GEN_A1000215_DIDOMPARQUET/DOM.parquet'
-      ])",
-    plog = "read_parquet([
+    ),
+    plog = c(
       '{x}/A100021/GEN_A1000214_DMMETPARQUET/MET.parquet',
       '{x}/A100021/GEN_A1000215_DMDOMPARQUET/DOM.parquet'
-      ])",
-    cind = "read_parquet([
+    ),
+    cind = c(
       '{x}/A100021/GEN_A1000212_DIMETPARQUET/MET.parquet',
       '{x}/A100021/GEN_A1000216_DIDOMPARQUET/DOM.parquet'
-      ])",
-    clog = "read_parquet([
+    ),
+    clog = c(
       '{x}/A100021/GEN_A1000212_DMMETPARQUET/MET.parquet',
       '{x}/A100021/GEN_A1000216_DMDOMPARQUET/DOM.parquet'
-      ])",
-    cfam = "read_parquet([
+    ),
+    cfam = c(
       '{x}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
       '{x}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
-      ])"
+    )
   )
 )
 
@@ -59,7 +59,7 @@ paths = list(
     "ear_root" = "X:/HAB-MaD-SeRN/ear/{x}"
   ),
   pc = list(
-    "gen_root" = "'~/work/insee/rp/an={an}/{x}/*.parquet'",
+    "gen_root" = "~/work/insee/rp/an={an}/{x}/",
     "edl_root" = "~/work/insee/rp/an={an}",
     "ear_root" = "~/work/insee/ear/{x}"
   )
@@ -76,30 +76,21 @@ paths = list(
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
+get_rp <- function(conn, an, src = c("gen", "edl")) {
   src = match.arg(src)
   if (src == "edl" && site == "pc") {
     src = "gen"
   }
+  # gen ----
   if (src == "gen") {
-    if (!an %in% 2020:2021) {
-      stop("'an' doit valoir 2020 ou 2021 pour la source 'gen'")
-    }
     root = paths[[site]]$gen_root
     if (site == "pc") {
       pat = gsub('{an}', an, root, fixed = T)
-      files = extend(rp_ext, pat)
+      paths = extend(rp_ext, pat)
     } else {
-      files = rp_gen_files[[as.character(an)]]
+      paths = rp_gen_files[[as.character(an)]]
     }
-    ret = lapply(
-      gsub("{x}", root, files, fixed = T),
-      function(path) {
-        dplyr::tbl(conn, path) |>
-          dplyr::rename_with(tolower)
-      }
-    )
-    names(ret) = names(files)
+  # edl ----
   } else if (src == "edl") {
     an2 = an %% 100
     angeo2 = (an + 2) %% 100
@@ -115,10 +106,9 @@ get_rp <- function(conn, an = 2021, src = c("gen", "edl")) {
       cvt[rp_ext],
       paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
     )
-    ret = tbl_list(conn, paths, lower = TRUE)
-    names(ret) = rp_ext
+    names(paths) = names(cvt)
   }
-  ret
+  tbl_list(conn, paths, lower = TRUE)
 }
 
 #' Extensions RP

@@ -4,7 +4,7 @@
 \alias{get_rp}
 \title{Renvoie une liste des tables du RP21}
 \usage{
-get_rp(conn, an = 2021, src = c("gen", "edl"))
+get_rp(conn, an, src = c("gen", "edl"))
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}

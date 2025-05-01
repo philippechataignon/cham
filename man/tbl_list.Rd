@@ -5,7 +5,7 @@
 \title{Renvoit une liste de tables duckdb depuis une liste
 de chemins vers des fichiers/répertoires parquet}
 \usage{
-tbl_list(conn, paths, level = 0, lower = FALSE)
+tbl_list(conn, paths, level = 0, lower = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb}

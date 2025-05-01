@@ -4,7 +4,7 @@
 \alias{tbl_pqt}
 \title{Renvoit une table duckdb depuis un fichier parquet y.c S3}
 \usage{
-tbl_pqt(conn, path, level = 0, lower = FALSE)
+tbl_pqt(conn, path, level = 0, lower = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb}
