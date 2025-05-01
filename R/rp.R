@@ -76,7 +76,7 @@ paths = list(
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an, src = c("gen", "edl")) {
+get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
   src = match.arg(src)
   if (src == "edl" && site == "pc") {
     src = "gen"
@@ -108,7 +108,7 @@ get_rp <- function(conn, an, src = c("gen", "edl")) {
     )
     names(paths) = names(cvt)
   }
-  tbl_list(conn, paths, lower = TRUE)
+  tbl_list(conn, paths, lower = TRUE, verbose = verbose)
 }
 
 #' Extensions RP
