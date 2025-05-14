@@ -75,7 +75,7 @@ paths = list(
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
+get_rp <- function(conn, an, src = c("gen", "edl", "prov"), verbose = FALSE) {
   src = match.arg(src)
   if (src == "edl" && site == "pc") {
     src = "gen"
@@ -96,24 +96,29 @@ get_rp <- function(conn, an, src = c("gen", "edl"), verbose = FALSE) {
     }
   # edl ----
   } else if (src == "edl") {
-    if (!site %in% c("ls3", "aus")) {
+    if (site == "ls3" && an == 2022) {
+      files = extend(rp_ext, file.path(s3perso, "edl/an=2022/{x}.parquet"))
+    } else if (!site %in% c("ls3", "aus")) {
       stop("src non présente sur ce site")
+    } else {
+      an2 = an %% 100
+      angeo2 = (an + 2) %% 100
+      cvt = list(
+        "pind" = "prin_ind",
+        "plog" = "prin_log",
+        "cind" = "compl_ind",
+        "clog" = "compl_log",
+        "cfam" = "compl_fam"
+      )
+      root = paths[[site]]$edl_root
+      files = extend(
+        cvt[rp_ext],
+        paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
+      )
+      names(files) = names(cvt)
     }
-    an2 = an %% 100
-    angeo2 = (an + 2) %% 100
-    cvt = list(
-      "pind" = "prin_ind",
-      "plog" = "prin_log",
-      "cind" = "compl_ind",
-      "clog" = "compl_log",
-      "cfam" = "compl_fam"
-    )
-    root = paths[[site]]$edl_root
-    files = extend(
-      cvt[rp_ext],
-      paste0(root, "/RP", an2, "/PARQUET/{x}", angeo2, "/")
-    )
-    names(files) = names(cvt)
+  } else if (src == "prov" && an == 2022) {
+    files = extend(rp_ext, file.path(s3perso, "edl/RP22/{x}.parquet"))
   }
   tbl_list(conn, files, lower = TRUE, verbose = verbose)
 }
