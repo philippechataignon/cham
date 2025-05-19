@@ -119,6 +119,8 @@ get_rp <- function(conn, an, src = c("gen", "edl", "prov"), verbose = FALSE) {
     }
   } else if (src == "prov" && an == 2022) {
     files = extend(rp_ext, file.path(s3perso, "edl/RP22/{x}.parquet"))
+  } else if (src == "prov" && an == 2021) {
+    files = extend(rp_ext, file.path(s3expl, "rp_repond/rprepond_{x}.parquet"))
   }
   tbl_list(conn, files, lower = TRUE, verbose = verbose)
 }
