@@ -75,7 +75,7 @@ paths = list(
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an, src = c("gen", "edl", "dmtr", "duckdb"), verbose = FALSE) {
+get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
   src = match.arg(src)
   if (src == "edl" && site == "pc") {
     src = "gen"
@@ -122,14 +122,18 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr", "duckdb"), verbose = 
   } else if (src == "dmtr" && an == 2021) {
     files = extend(rp_ext, file.path(s3expl, "rp_repond/rprepond_{x}.parquet"))
   }
-  if (src == "duckdb") {
-    dbExecute(conn, "DETACH DATABASE IF EXISTS rp")
-    dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0("rp", an %% 100, ".duckdb")), "' as rp"))
-    ret =  lapplyn(rp_ext, function(x) tbl(conn, paste0("rp.", x)))
-  } else {
-    ret = tbl_list(conn, files, lower = TRUE, verbose = verbose)
-  }
-  ret
+  tbl_list(conn, files, lower = TRUE, verbose = verbose)
+}
+
+#' Renvoie une liste des tables RP depuis bases duckdb
+#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
+#' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
+#' @export
+get_rpdb <- function(conn, an, db = "rp") {
+  dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
+  dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0("rp", an, ".duckdb")), "' as ", db))
+  lapplyn(rp_ext, function(x) tbl(conn, paste0(db, ".", x)))
 }
 
 #' Extensions RP
