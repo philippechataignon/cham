@@ -75,7 +75,7 @@ paths = list(
 #' trp21$pind |>
 #'   dplyr::count(wt = ipondi)
 #' @export
-get_rp <- function(conn, an, src = c("gen", "edl", "prov"), verbose = FALSE) {
+get_rp <- function(conn, an, src = c("gen", "edl", "dmtr", "duckdb"), verbose = FALSE) {
   src = match.arg(src)
   if (src == "edl" && site == "pc") {
     src = "gen"
@@ -117,12 +117,19 @@ get_rp <- function(conn, an, src = c("gen", "edl", "prov"), verbose = FALSE) {
       )
       names(files) = names(cvt)
     }
-  } else if (src == "prov" && an == 2022) {
+  } else if (src == "dmtr" && an == 2022) {
     files = extend(rp_ext, file.path(s3perso, "edl/RP22/{x}.parquet"))
-  } else if (src == "prov" && an == 2021) {
+  } else if (src == "dmtr" && an == 2021) {
     files = extend(rp_ext, file.path(s3expl, "rp_repond/rprepond_{x}.parquet"))
   }
-  tbl_list(conn, files, lower = TRUE, verbose = verbose)
+  if (src == "duckdb") {
+    dbExecute(conn, "DETACH DATABASE IF EXISTS rp")
+    dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0("rp", an %% 100, ".duckdb")), "' as rp"))
+    ret =  lapplyn(rp_ext, function(x) tbl(conn, paste0("rp.", x)))
+  } else {
+    ret = tbl_list(conn, files, lower = TRUE, verbose = verbose)
+  }
+  ret
 }
 
 #' Extensions RP
