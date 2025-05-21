@@ -130,11 +130,21 @@ get_site <- function() {
   ret
 }
 
-
 #' Nom du site
 #'
 #' @export
 site = get_site()
+
+#' Fonction lapply avec utilisation des noms de la liste nommée
+#' @param l : liste character
+#' @param f : fonction appliquée à chaque élément de la liste
+#' @return Liste d'éléments nommés avec le résultat de la fonction
+#' @export
+lapplyn <- function(l, f) {
+  ret = lapply(l, f)
+  names(ret) = l
+  ret
+}
 
 #' Renvoie une liste nommée à partir d'un pattern
 #' @param l : vecteur character
@@ -144,12 +154,11 @@ site = get_site()
 #' extend(c("a", "b", "c"), "test{x}")
 #' @export
 extend <- function(l, pattern) {
-  ret = lapply(
+  ret = lapplyn(
     l,
     function(x) {
       gsub('{x}', x, pattern, fixed = T)
     }
   )
-  names(ret) <- l
   ret
 }
