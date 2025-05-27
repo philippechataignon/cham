@@ -97,7 +97,7 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
   # edl ----
   } else if (src == "edl") {
     if (site == "ls3" && an == 2022) {
-      files = extend(rp_ext, file.path(s3perso, "edl/an=2022/{x}.parquet"))
+      files = extend(rp_ext, file.path(s3expl, "edl/an=2022/{x}.parquet"))
     } else if (!site %in% c("ls3", "aus")) {
       stop("src non présente sur ce site")
     } else {
