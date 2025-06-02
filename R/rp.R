@@ -96,10 +96,10 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
     }
   # edl ----
   } else if (src == "edl") {
-    if (site == "ls3" && an == 2022) {
-      files = extend(rp_ext, file.path(s3expl, "edl/an=2022/{x}.parquet"))
-    } else if (!site %in% c("ls3", "aus")) {
+    if (!site %in% c("ls3", "aus")) {
       stop("src non présente sur ce site")
+    } else if (site == "ls3" && an == 2022) {
+      files = extend(rp_ext, file.path(s3expl, "edl/an=2022/{x}.parquet"))
     } else {
       an2 = an %% 100
       angeo2 = (an + 2) %% 100
@@ -122,7 +122,11 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
   } else if (src == "dmtr" && an == 2021) {
     files = extend(rp_ext, file.path(s3expl, "rp_repond/rprepond_{x}.parquet"))
   }
-  tbl_list(conn, files, lower = TRUE, verbose = verbose)
+  ret = tbl_list(conn, files, lower = TRUE, verbose = verbose)
+  if (length(ret) == 0) {
+    warning("Liste vide !")
+  }
+  ret
 }
 
 #' Renvoie une liste des tables RP depuis bases duckdb
@@ -132,7 +136,7 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
 #' @export
 get_rpdb <- function(conn, an, db = "rp") {
   DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
-  DBI::dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0("rp", an, ".duckdb")), "' as ", db))
+  DBI::dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0(db, an, ".duckdb")), "' as ", db))
   lapplyn(rp_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
 }
 
