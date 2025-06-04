@@ -24,8 +24,13 @@ get_conn <- function(dbdir = ":memory:") {
       "
     )
   }
+  DBI::dbExecute(
+    conn,
+    "SET temp_directory = '/tmp/duckdb_swap';"
+  )
   conn
 }
+
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
 #' @param conn : connexion duckdb
 #' @param path : chemin de la table/répertoire parquet
