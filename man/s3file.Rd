@@ -4,7 +4,7 @@
 \alias{s3file}
 \title{Renvoit un SubFileSystemTree}
 \usage{
-s3file(path, fs, ...)
+s3file(path, root, fs)
 }
 \arguments{
 \item{path}{: chemin}

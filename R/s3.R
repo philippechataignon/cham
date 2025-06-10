@@ -9,29 +9,21 @@ s3createfs <- function() {
   )
 }
 
-#' Renvoit une chaine s3 depuis un chemin
-#' @param path : chemin
-#' @return chaîne chemin
-#' @export
-s3path <- function(path, bucket, prefix) {
-  if (missing(bucket)) bucket = Sys.getenv("BUCKET")
-  if (missing(prefix)) prefix = Sys.getenv("PREFIX")
-  if (nchar(prefix) == 0) {
-    ret = file.path(bucket, path)
-  } else {
-    ret = file.path(bucket, prefix, path)
-  }
-  ret
-}
-
 #' Renvoit un SubFileSystemTree
 #' @param path : chemin
 #' @note Peut être utilisé avec read_parquet, write_parquet
 #'       et read_csv_arrow
 #' @export
-s3file <- function(path, fs, ...) {
-  if (missing(fs)) fs = s3fs
-  fs$path(s3path(path, ...))
+s3file <- function(path, root, fs) {
+  if (get_site() %in% c("ssp", "ls3")) {
+    if (missing(fs))
+      fs = s3createfs()
+    if (missing(root))
+      root = Sys.getenv("S3ROOT")
+    fs$path(paste(root, path, sep="/"))
+  } else {
+    file.path("~/work", path)
+  }
 }
 
 #' Teste si path existe
