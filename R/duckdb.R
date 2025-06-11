@@ -82,7 +82,7 @@ site = get_site()
 if (site == "ls3") {
   s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
 } else {
-  s3perso <- "~/work/data"
+  s3perso <- "~/work"
 }
 
 if (site == "ls3") {
