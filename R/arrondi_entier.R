@@ -21,6 +21,7 @@ arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F) {
   xs = sum(xf, na.rm = na.rm)
   if (verbose) {
     cat("target:", target, "\n")
+    cat("xs:", xs, "\n")
     cat("target - xs:", target - xs, "\n")
   }
   # ajoute 1 aux indices correspondant aux (target - xs) parties décimales
@@ -29,8 +30,11 @@ arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F) {
     xd <- order(x - xf, decreasing = T)[1:(target - xs)]
     xf[xd] <- xf[xd] + 1L
   }
-  if (sum(xf) != target) {
+  if (sum(xf, na.rm = na.rm) != target) {
     warning("Ecart: sum(xf)=", sum(xf), " - target=", target)
+  }
+  if (na.rm) {
+    xf[is.na(xf)] <- 0
   }
   xf
 }
