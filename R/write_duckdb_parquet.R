@@ -26,7 +26,10 @@ write_duckdb_parquet <- function(
   verbose = FALSE
 ) {
   if (is.null(path)) {
-    path = file.path(dir, paste0(deparse(substitute(table)), ".parquet"))
+    if (is.null(partition))
+      path = file.path(dir, paste0(deparse(substitute(table)), ".parquet"))
+    else
+      path = file.path(dir, deparse(substitute(table)))
   } else {
     path = file.path(dir, path)
   }
