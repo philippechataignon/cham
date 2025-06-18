@@ -16,25 +16,30 @@ arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F) {
     target <- round(sum(x, na.rm = na.rm))
   }
   target <- as.integer(target)
-  x <- x / sum(x) * target
-  xf <- as.integer(floor(x))
-  xs = sum(xf, na.rm = na.rm)
-  if (verbose) {
-    cat("target:", target, "\n")
-    cat("xs:", xs, "\n")
-    cat("target - xs:", target - xs, "\n")
+  if (sum(x, na.rm=na.rm) == 0) {
+    ret = vector("integer", length(x))
+  } else {
+    x <- x / sum(x) * target
+    xf <- as.integer(floor(x))
+    xs = sum(xf, na.rm = na.rm)
+    if (verbose) {
+      cat("target:", target, "\n")
+      cat("xs:", xs, "\n")
+      cat("target - xs:", target - xs, "\n")
+    }
+    # ajoute 1 aux indices correspondant aux (target - xs) parties décimales
+    # les plus importantes
+    if (xs < target) {
+      xd <- order(x - xf, decreasing = T)[1:(target - xs)]
+      xf[xd] <- xf[xd] + 1L
+    }
+    if (sum(xf, na.rm = na.rm) != target) {
+      warning("Ecart: sum(xf)=", sum(xf), " - target=", target)
+    }
+    if (na.rm) {
+      xf[is.na(xf)] <- 0
+    }
+    ret = xf
   }
-  # ajoute 1 aux indices correspondant aux (target - xs) parties décimales
-  # les plus importantes
-  if (xs < target) {
-    xd <- order(x - xf, decreasing = T)[1:(target - xs)]
-    xf[xd] <- xf[xd] + 1L
-  }
-  if (sum(xf, na.rm = na.rm) != target) {
-    warning("Ecart: sum(xf)=", sum(xf), " - target=", target)
-  }
-  if (na.rm) {
-    xf[is.na(xf)] <- 0
-  }
-  xf
+  ret
 }
