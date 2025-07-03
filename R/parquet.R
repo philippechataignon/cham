@@ -1,12 +1,9 @@
 #' Compression zstd pour write_parquet
 #' @export
 write_parquet <- function(dt, path, quiet = F, ...) {
-  if (!quiet) {
-    if ("SubTreeFileSystem" %in% class(path)) {
-      cat("Write s3", path$base_path, "\n")
-    } else {
-      cat("Write", path, "\n")
-    }
-  }
-  arrow::write_parquet(dt, path, ..., compression = "zstd")
+  tempname = paste0(sample(letters, 8, replace = TRUE), collapse="")
+  conn = get_conn()
+  duckdb::duckdb_register(conn, tempname, dt)
+  write_duckdb_parquet_raw(conn, tempname, path)
+  duckdb::duckdb_unregister(conn, tempname)
 }

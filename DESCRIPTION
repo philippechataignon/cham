@@ -1,7 +1,7 @@
 Package: cham
 Type: Package fonctions utiles INSEE
 Title: Fonctions utiles
-Version: 1.0.2
+Version: 1.1.0
 Author: Philippe Chataignon
 Maintainer: Philippe Chataignon <philippe.chataignon@insee.fr>
 Description: Fonctions utiles 
@@ -9,12 +9,13 @@ License: GPL-2
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
+Suggests:
+  arrow
 Imports: 
   data.table,
   dplyr,
   DBI,
   duckdb,
-  arrow,
   glue,
   httr,
   zip

@@ -1,3 +1,16 @@
+#' @export
+write_duckdb_parquet_raw <- function(conn, table, path, order_by="", partition="", verbose=F)
+{
+  cmd = glue::glue(
+    "COPY (FROM {table} {order_by}) TO '{path}'
+    (FORMAT 'parquet', COMPRESSION 'zstd' {partition})"
+  )
+  if (verbose)
+    cat(cmd, "\n")
+  dbExecute(conn, cmd)
+  path
+}
+
 #' Écrit fichier parquet depuis une table duckdb
 #' @param table : table duckdb
 #' @param path : nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table
@@ -45,14 +58,13 @@ write_duckdb_parquet <- function(
   } else {
     order_by = paste(" ORDER BY", paste0(order_by, collapse = ','))
   }
-  cmd = glue::glue(
-    "COPY (FROM {table$lazy_query$x} {order_by}) TO '{path}'
-    (FORMAT 'parquet', COMPRESSION 'zstd' {partition_str})"
+  write_duckdb_parquet_raw(
+    conn = table$src$con,
+    table = table$lazy_query$x,
+    path = path,
+    order_by = order_by,
+    partition=partition_str,
+    verbose=verbose
   )
-  if (verbose) cat(cmd, "\n")
-  dbExecute(
-    table$src$con,
-    cmd
-  )
-  path
 }
+
