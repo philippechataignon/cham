@@ -7,7 +7,7 @@ write_duckdb_parquet_raw <- function(conn, table, path, order_by="", partition="
   )
   if (verbose)
     cat(cmd, "\n")
-  dbExecute(conn, cmd)
+  DBI::dbExecute(conn, cmd)
   path
 }
 

@@ -106,7 +106,7 @@ s3expl
 #' @return Code retour duckdb
 #' @export
 refresh_secret <- function(conn) {
-  dbExecute(conn, paste0(
+  DBI::dbExecute(conn, paste0(
     "CREATE OR REPLACE SECRET secret (
         TYPE s3,
         PROVIDER config,
