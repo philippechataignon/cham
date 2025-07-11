@@ -155,3 +155,18 @@ extend <- function(l, pattern) {
   )
   ret
 }
+
+#' Renvoie TRUE si écart dans la norme
+#' @param v1 : valeur initiale
+#' @param v2 : valeur finale
+#' @param abs : écart absolu maximal, 0 par défaut
+#' @param rel : écart relatif maximal, 0 par défaut
+#' @return Renvoie TRUE si écart dans la norme, FALSE sinon
+#' @examples
+#' # OK si ecart < 5% ou <= 10
+#' ecart(c(100, 100, 100), c(105, 115, 80), 10, 0.05)
+#' # [1]  TRUE FALSE FALSE
+#' @export
+ecart <- function(v1, v2, abs=0, rel=0) {
+  abs(v2 - v1) < pmax(abs, rel * pmin(v1, v2))
+}
