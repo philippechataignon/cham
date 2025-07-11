@@ -4,16 +4,23 @@
 \alias{arrondi_entier}
 \title{Arrondit un vecteur numérique sur une cible entière}
 \usage{
-arrondi_entier(x, target = NULL, na.rm = F, verbose = F)
+arrondi_entier(
+  x,
+  p = NULL,
+  method = c("abs", "max", "min"),
+  target = NULL,
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x:}{vecteur à traiter contenant uniquement des valeurs positives}
 
-\item{target:}{entier cible pour la somme de x, par défaut arrondi de la somme de x}
+\item{p:}{(optionnel) vecteur de poids, sinon poids = 1}
 
-\item{na.rm:}{supprime les valeurs manquantes si TRUE, FALSE par défaut}
+\item{target:}{(optionnel) entier cible pour la somme pondérée de x,
+par défaut somme pondérée de x}
 
-\item{verbose:}{si TRUE, affiche des informations sur le calcul}
+\item{na.rm:}{(optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut}
 }
 \description{
 Arrondit un vecteur numérique sur une cible entière

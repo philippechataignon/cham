@@ -1,45 +1,56 @@
 #' Arrondit un vecteur numérique sur une cible entière
 #' @param x: vecteur à traiter contenant uniquement des valeurs positives
-#' @param target: entier cible pour la somme de x, par défaut arrondi de la somme de x
-#' @param na.rm: supprime les valeurs manquantes si TRUE, FALSE par défaut
-#' @param verbose: si TRUE, affiche des informations sur le calcul
+#' @param p: (optionnel) vecteur de poids, sinon poids = 1
+#' @param target: (optionnel) entier cible pour la somme pondérée de x,
+#' par défaut somme pondérée de x
+#' @param na.rm: (optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut
 #' @export
-arrondi_entier <- function(x, target = NULL, na.rm = F, verbose = F) {
-  if (!na.rm && any(is.na(x)))
-    stop(
-      "x ne doit pas contenir de NA. ",
-      "Utiliser na.rm = T pour ne pas tenir ",
-      "compte des valeurs manquantes"
-    )
-  if (any(x < 0)) stop("x ne doit contenir que des valeurs positives")
-  if (is.null(target)) {
-    target <- round(sum(x, na.rm = na.rm))
+
+arrondi_entier <- function(x, p = NULL, method=c("abs", "max", "min"), target = NULL, na.rm = FALSE)
+{
+  method = match.arg(method)
+  wp = p
+  if (is.null(p)) {
+    wp = 1L
+    method = "max"
   }
-  target <- as.integer(target)
-  if (sum(x, na.rm=na.rm) == 0) {
-    ret = vector("integer", length(x))
+  if (na.rm) {
+    x[is.na(x)] <- 0
+    wp[is.na(wp)] <- 0
+  }
+  if (any(is.na(x)))
+    stop("x ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0")
+  if (any(is.na(wp)))
+    stop("p ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0")
+  if (any(x < 0))
+    stop("x ne doit contenir que des valeurs positives")
+  if (!is.null(target)) {
+    x <- x / sum(x) * target / wp
+  }
+  if (length(x) == 0 | sum(x) == 0) {
+    xe = vector("integer", length(x))
   } else {
-    x <- x / sum(x) * target
-    xf <- as.integer(floor(x))
-    xs = sum(xf, na.rm = na.rm)
-    if (verbose) {
-      cat("target:", target, "\n")
-      cat("xs:", xs, "\n")
-      cat("target - xs:", target - xs, "\n")
+    wp = as.integer(wp)
+    xe = as.integer(trunc(x))
+    xf = (x - trunc(x)) * wp
+    o <- order(xf, xe, decreasing = T)
+    n = as.integer(round(sum(xf)))
+    if (n != 0) {
+      if (is.null(p)) {
+        cs = 1:length(x)
+      } else {
+        cs = cumsum(p[o])
+      }
+      if (method == "abs") {
+        nm = which.min(abs(cs - n))
+      } else if (method == "max") {
+        nm = match(TRUE, cs >= n)
+      } else if (method == "min") {
+        nm = max(which(cs <= n))
+      }
+      ind = o[1:nm]
+      xe[ind] = xe[ind] + 1L
     }
-    # ajoute 1 aux indices correspondant aux (target - xs) parties décimales
-    # les plus importantes
-    if (xs < target) {
-      xd <- order(x - xf, decreasing = T)[1:(target - xs)]
-      xf[xd] <- xf[xd] + 1L
-    }
-    if (sum(xf, na.rm = na.rm) != target) {
-      warning("Ecart: sum(xf)=", sum(xf), " - target=", target)
-    }
-    if (na.rm) {
-      xf[is.na(xf)] <- 0
-    }
-    ret = xf
   }
-  ret
+  xe
 }
