@@ -16,11 +16,13 @@ s3createfs <- function() {
 #' @export
 s3file <- function(path, root, fs) {
   if (get_site() %in% c("ssp", "ls3")) {
-    if (missing(fs))
+    if (missing(fs)) {
       fs = s3createfs()
-    if (missing(root))
+    }
+    if (missing(root)) {
       root = Sys.getenv("S3ROOT")
-    fs$path(paste(root, path, sep="/"))
+    }
+    fs$path(paste(root, path, sep = "/"))
   } else {
     file.path("~/work", path)
   }
@@ -30,7 +32,9 @@ s3file <- function(path, root, fs) {
 #' @param path : chemin
 #' @export
 s3exists <- function(path, fs, ...) {
-  if (missing(fs)) fs = s3fs
+  if (missing(fs)) {
+    fs = s3fs
+  }
   fileinfo = fs$GetFileInfo(s3path(path, ...))
   fileinfo[[1]]$type != 0
 }
@@ -43,7 +47,9 @@ s3exists <- function(path, fs, ...) {
 #' @return Renvoit un SubTreeFileSystem utilisable avec `copy_files`
 #' @export
 s3download <- function(url, path, fs, force = FALSE) {
-  if (missing(path)) path = file.path("download", basename(url))
+  if (missing(path)) {
+    path = file.path("download", basename(url))
+  }
   file = basename(path)
   if (force || !s3exists(path, fs = fs)) {
     # crée répertoire temporaire
@@ -59,4 +65,3 @@ s3download <- function(url, path, fs, force = FALSE) {
   }
   s3file(path, fs = fs)
 }
-

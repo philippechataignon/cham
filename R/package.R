@@ -1,5 +1,7 @@
 .onAttach <- function(libname, pkgname) {
-  if (!interactive()) return
+  if (!interactive()) {
+    return
+  }
   packageStartupMessage(paste(
     "Package",
     pkgname,

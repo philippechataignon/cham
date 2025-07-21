@@ -6,8 +6,13 @@
 #' @param na.rm: (optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut
 #' @export
 
-arrondi_entier <- function(x, p = NULL, method=c("abs", "max", "min"), target = NULL, na.rm = FALSE)
-{
+arrondi_entier <- function(
+  x,
+  p = NULL,
+  method = c("abs", "max", "min"),
+  target = NULL,
+  na.rm = FALSE
+) {
   method = match.arg(method)
   wp = p
   if (is.null(p)) {
@@ -18,12 +23,19 @@ arrondi_entier <- function(x, p = NULL, method=c("abs", "max", "min"), target = 
     x[is.na(x)] <- 0
     wp[is.na(wp)] <- 0
   }
-  if (any(is.na(x)))
-    stop("x ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0")
-  if (any(is.na(wp)))
-    stop("p ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0")
-  if (any(x < 0))
+  if (any(is.na(x))) {
+    stop(
+      "x ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0"
+    )
+  }
+  if (any(is.na(wp))) {
+    stop(
+      "p ne doit pas contenir de valeurs manquantes. na.rm=T pour les remplacer par 0"
+    )
+  }
+  if (any(x < 0)) {
     stop("x ne doit contenir que des valeurs positives")
+  }
   if (!is.null(target)) {
     x <- x / sum(x) * target / wp
   }

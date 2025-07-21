@@ -14,10 +14,12 @@ txevol <- function(eff1, eff2, nb_per, pct = F, dec = NA) {
     eff2 == 0 ~ 0,
     eff1 > 0 ~ (eff2 / eff1)^(1 / nb_per) - 1
   )
-  if (pct)
+  if (pct) {
     ret = ret * 100
-  if (!is.na(dec))
+  }
+  if (!is.na(dec)) {
     ret = round(ret, dec)
+  }
   ret
 }
 
@@ -36,10 +38,12 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
     eff1 == eff2 ~ solde / (nb_per * eff1),
     eff1 != eff2 ~ txevol(eff1, eff2, nb_per) * solde / (eff2 - eff1)
   )
-  if (pct)
+  if (pct) {
     ret = ret * 100
-  if (!is.na(dec))
+  }
+  if (!is.na(dec)) {
     ret = round(ret, dec)
+  }
   ret
 }
 
@@ -53,9 +57,12 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
 #'   FALSE par défaut
 #' @export
 download <- function(url, file, dir, force = FALSE) {
-  if (missing(file)) file = basename(url)
-  if (missing(dir))
+  if (missing(file)) {
+    file = basename(url)
+  }
+  if (missing(dir)) {
     dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset = NA), tempdir())
+  }
   path = file.path(dir, file)
   if (force || !file.exists(path)) {
     ret = download.file(url, path)
@@ -78,7 +85,9 @@ downzip <- function(url, keep = F) {
     tail(1) |>
     pull(filename)
   ret = fread(cmd = paste("unzip -p", zipfile, biggest))
-  if (!keep) unlink(zipfile)
+  if (!keep) {
+    unlink(zipfile)
+  }
   ret
 }
 
@@ -167,6 +176,6 @@ extend <- function(l, pattern) {
 #' ecart(c(100, 100, 100), c(105, 115, 80), 10, 0.05)
 #' # [1]  TRUE FALSE FALSE
 #' @export
-ecart <- function(v1, v2, abs=0, rel=0) {
+ecart <- function(v1, v2, abs = 0, rel = 0) {
   abs(v2 - v1) < pmax(abs, rel * pmin(v1, v2))
 }

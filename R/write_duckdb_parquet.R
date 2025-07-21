@@ -1,12 +1,19 @@
 #' @export
-write_duckdb_parquet_raw <- function(conn, table, path, order_by="", partition="", verbose=F)
-{
+write_duckdb_parquet_raw <- function(
+  conn,
+  table,
+  path,
+  order_by = "",
+  partition = "",
+  verbose = F
+) {
   cmd = glue::glue(
     "COPY (FROM {table} {order_by}) TO '{path}'
     (FORMAT 'parquet', COMPRESSION 'zstd' {partition})"
   )
-  if (verbose)
+  if (verbose) {
     cat(cmd, "\n")
+  }
   DBI::dbExecute(conn, cmd)
   path
 }
@@ -39,10 +46,11 @@ write_duckdb_parquet <- function(
   verbose = FALSE
 ) {
   if (is.null(path)) {
-    if (is.null(partition))
+    if (is.null(partition)) {
       path = file.path(dir, paste0(deparse(substitute(table)), ".parquet"))
-    else
+    } else {
       path = file.path(dir, deparse(substitute(table)))
+    }
   } else {
     path = file.path(dir, path)
   }
@@ -63,8 +71,7 @@ write_duckdb_parquet <- function(
     table = table$lazy_query$x,
     path = path,
     order_by = order_by,
-    partition=partition_str,
-    verbose=verbose
+    partition = partition_str,
+    verbose = verbose
   )
 }
-

@@ -106,16 +106,26 @@ s3expl
 #' @return Code retour duckdb
 #' @export
 refresh_secret <- function(conn) {
-  DBI::dbExecute(conn, paste0(
-    "CREATE OR REPLACE SECRET secret (
+  DBI::dbExecute(
+    conn,
+    paste0(
+      "CREATE OR REPLACE SECRET secret (
         TYPE s3,
         PROVIDER config,
         URL_STYLE 'path',
         REGION 'us-east-1',",
-        "ENDPOINT '",      Sys.getenv("AWS_S3_ENDPOINT"), "',",
-        "KEY_ID '",        Sys.getenv("AWS_ACCESS_KEY_ID"), "',",
-        "SECRET '",        Sys.getenv("AWS_SECRET_ACCESS_KEY"), "',",
-        "SESSION_TOKEN '", Sys.getenv("AWS_SESSION_TOKEN"), "'
+      "ENDPOINT '",
+      Sys.getenv("AWS_S3_ENDPOINT"),
+      "',",
+      "KEY_ID '",
+      Sys.getenv("AWS_ACCESS_KEY_ID"),
+      "',",
+      "SECRET '",
+      Sys.getenv("AWS_SECRET_ACCESS_KEY"),
+      "',",
+      "SESSION_TOKEN '",
+      Sys.getenv("AWS_SESSION_TOKEN"),
+      "'
       )"
     )
   )

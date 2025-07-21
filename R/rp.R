@@ -1,25 +1,25 @@
 rp_gen_files = list(
   "2020" = list(
     pind = c(
-        '{root}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
-        '{root}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
-        ),
+      '{root}/A100020/GEN_A1000204_DIMETPARQUET/MET.parquet',
+      '{root}/A100020/GEN_A1000205_DIDOMPARQUET/DOM.parquet'
+    ),
     plog = c(
-        '{root}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
-        '{root}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
-        ),
+      '{root}/A100020/GEN_A1000204_DMMETPARQUET/MET.parquet',
+      '{root}/A100020/GEN_A1000205_DMDOMPARQUET/DOM.parquet'
+    ),
     cind = c(
-        '{root}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
-        '{root}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
-        ),
+      '{root}/A100020/GEN_A1000202_DIMETPARQUET/MET.parquet',
+      '{root}/A100020/GEN_A1000206_DIDOMPARQUET/DOM.parquet'
+    ),
     clog = c(
-        '{root}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
-        '{root}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
-        ),
+      '{root}/A100020/GEN_A1000202_DMMETPARQUET/MET.parquet',
+      '{root}/A100020/GEN_A1000206_DMDOMPARQUET/DOM.parquet'
+    ),
     cfam = c(
-        '{root}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
-        '{root}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
-        )
+      '{root}/A100020/GEN_A1000202_DFMETPARQUET/MET.parquet',
+      '{root}/A100020/GEN_A1000206_DFDOMPARQUET/DOM.parquet'
+    )
   ),
   "2021" = list(
     pind = c(
@@ -94,7 +94,7 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
     } else {
       stop("src non présente sur ce site")
     }
-  # edl ----
+    # edl ----
   } else if (src == "edl") {
     if (!site %in% c("ls3", "aus")) {
       stop("src non présente sur ce site")
@@ -136,7 +136,15 @@ get_rp <- function(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE) {
 #' @export
 get_rpdb <- function(conn, an, db = "rp") {
   DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
-  DBI::dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0(db, an, ".duckdb")), "' as ", db))
+  DBI::dbExecute(
+    conn,
+    paste0(
+      "ATTACH '",
+      file.path(s3perso, "duckdb", paste0(db, an, ".duckdb")),
+      "' as ",
+      db
+    )
+  )
   lapplyn(rp_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
 }
 
@@ -147,7 +155,15 @@ get_rpdb <- function(conn, an, db = "rp") {
 #' @export
 get_eardb <- function(conn, an, db = "ear") {
   DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
-  DBI::dbExecute(conn, paste0("ATTACH '", file.path(s3perso, "duckdb", paste0(db, an, ".duckdb")), "' as ", db))
+  DBI::dbExecute(
+    conn,
+    paste0(
+      "ATTACH '",
+      file.path(s3perso, "duckdb", paste0(db, an, ".duckdb")),
+      "' as ",
+      db
+    )
+  )
   lapplyn(ear_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
 }
 
