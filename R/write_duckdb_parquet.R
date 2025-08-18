@@ -76,4 +76,5 @@ write_duckdb_parquet <- function(
     partition = partition_str,
     verbose = verbose
   )
+  invisible(table)
 }
