@@ -7,7 +7,7 @@
 write_duckdb_parquet(
   table,
   path = NULL,
-  dir = ".",
+  dir = NULL,
   partition = NULL,
   order_by = NULL,
   verbose = FALSE

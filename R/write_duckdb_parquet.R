@@ -40,19 +40,21 @@ write_duckdb_parquet_raw <- function(
 write_duckdb_parquet <- function(
   table,
   path = NULL,
-  dir = ".",
+  dir = NULL,
   partition = NULL,
   order_by = NULL,
   verbose = FALSE
 ) {
-  if (is.null(path)) {
-    if (is.null(partition)) {
-      path = file.path(dir, paste0(deparse(substitute(table)), ".parquet"))
+  if (!is.null(dir)) {
+    if (is.null(path)) {
+      if (is.null(partition)) {
+        path = file.path(dir, paste0(deparse(substitute(table)), ".parquet"))
+      } else {
+        path = file.path(dir, deparse(substitute(table)))
+      }
     } else {
-      path = file.path(dir, deparse(substitute(table)))
+      path = file.path(dir, path)
     }
-  } else {
-    path = file.path(dir, path)
   }
   if (is.null(partition)) {
     partition_str = ""
