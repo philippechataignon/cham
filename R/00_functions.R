@@ -79,7 +79,7 @@ download <- function(url, file, dir, force = FALSE) {
 #' @export
 downzip <- function(url, keep = F) {
   zipfile = tempfile()
-  download.file(url = url, destfile = zipfile, method = "curl")
+  download.file(url = url, destfile = zipfile, method = "curl", mode="wb")
   biggest = zip::zip_list(zipfile) |>
     arrange(compressed_size) |>
     tail(1) |>
