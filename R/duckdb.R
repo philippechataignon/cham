@@ -18,6 +18,7 @@ get_conn <- function(dbdir = ":memory:") {
     "
     INSTALL spatial;
     LOAD spatial;
+    CALL register_geoarrow_extensions();
     "
   )
   if (site %in% c("ls3", "ssp")) {
