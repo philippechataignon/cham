@@ -44,6 +44,28 @@ rp_gen_files = list(
       '{root}/A100021/GEN_A1000212_DFMETPARQUET/MET.parquet',
       '{root}/A100021/GEN_A1000216_DFDOMPARQUET/DOM.parquet'
     )
+  ),
+  "2022" = list(
+    pind = c(
+      '{root}/A100021/GEN_A1000224_DIMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000225_DIDOMPARQUET/DOM.parquet'
+    ),
+    plog = c(
+      '{root}/A100021/GEN_A1000224_DMMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000225_DMDOMPARQUET/DOM.parquet'
+    ),
+    cind = c(
+      '{root}/A100021/GEN_A1000222_DIMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000226_DIDOMPARQUET/DOM.parquet'
+    ),
+    clog = c(
+      '{root}/A100021/GEN_A1000222_DMMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000226_DMDOMPARQUET/DOM.parquet'
+    ),
+    cfam = c(
+      '{root}/A100021/GEN_A1000222_DFMETPARQUET/MET.parquet',
+      '{root}/A100021/GEN_A1000226_DFDOMPARQUET/DOM.parquet'
+    )
   )
 )
 
