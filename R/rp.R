@@ -1,27 +1,27 @@
 rp_gen_files = lapplyn(
   2020:2022,
   \(an) {
-    an = an %% 100L
+    an2 = an %% 100L
     list(
       pind = c(
-        gen(glue::glue('A1000{an}/GEN_A1000{an}4_DIMETPARQUET/MET.parquet')),
-        gen(glue::glue('A1000{an}/GEN_A1000{an}5_DIDOMPARQUET/DOM.parquet'))
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}4_DIMETPARQUET/MET.parquet')),
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}5_DIDOMPARQUET/DOM.parquet'))
       ),
       plog = c(
-        gen(glue::glue('A1000{an}/GEN_A1000{an}4_DMMETPARQUET/MET.parquet')),
-        gen(glue::glue('A1000{an}/GEN_A1000{an}5_DMDOMPARQUET/DOM.parquet'))
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}4_DMMETPARQUET/MET.parquet')),
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}5_DMDOMPARQUET/DOM.parquet'))
       ),
       cind = c(
-        gen(glue::glue('A1000{an}/GEN_A1000{an}2_DIMETPARQUET/MET.parquet')),
-        gen(glue::glue('A1000{an}/GEN_A1000{an}6_DIDOMPARQUET/DOM.parquet'))
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}2_DIMETPARQUET/MET.parquet')),
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}6_DIDOMPARQUET/DOM.parquet'))
       ),
       clog = c(
-        gen(glue::glue('A1000{an}/GEN_A1000{an}2_DMMETPARQUET/MET.parquet')),
-        gen(glue::glue('A1000{an}/GEN_A1000{an}6_DMDOMPARQUET/DOM.parquet'))
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}2_DMMETPARQUET/MET.parquet')),
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}6_DMDOMPARQUET/DOM.parquet'))
       ),
       cfam = c(
-        gen(glue::glue('A1000{an}/GEN_A1000{an}2_DFMETPARQUET/MET.parquet')),
-        gen(glue::glue('A1000{an}/GEN_A1000{an}6_DFDOMPARQUET/DOM.parquet'))
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}2_DFMETPARQUET/MET.parquet')),
+        gen(glue::glue('A1000{an2}/GEN_A1000{an2}6_DFDOMPARQUET/DOM.parquet'))
       )
     )
   }
@@ -132,6 +132,37 @@ get_rpdb <- function(conn, an, type="rp") {
 get_eardb <- function(conn, an, db = "ear") {
   db = attach_db(conn, path=paste0(db, an))
   lapplyn(ear_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
+}
+
+#' Renvoit tables EAR depuis GEN
+#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @return Liste de 4 éléments nommés 'ind', 'log', 'fam' et 'liens'
+#' @export
+get_ear <- function(conn, an, src = "gen")
+{
+  an2 = an %% 100L
+  src = match.arg(src)
+  cvt = list(
+    "ind" = "INDIVIDU",
+    "log" = "LOGEMENT",
+    "fam" = "FAMILLE",
+    "liens" = "LIEN"
+  )
+  if (an == 2022)
+    type = "PARQUET"
+  else
+    type = "PAR"
+  files = lapplyn(
+    ear_ext,
+    \(ext){
+      gen(glue::glue("A1000{an2}/GEN_A1000{an2}A_D{cvt[[ext]]}{type}/{toupper(ext)}{an2}.parquet"))
+    }
+  )
+  ret = tbl_list(conn, files, lower = TRUE)
+  if (length(ret) == 0) {
+    warning("Liste vide !")
+  }
+  ret
 }
 
 #' Extensions RP
