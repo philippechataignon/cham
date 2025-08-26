@@ -13,14 +13,16 @@ get_conn <- function(dbdir = ":memory:") {
       bigint = "integer64"
     )
   }
-  DBI::dbExecute(
-    conn,
-    "
-    INSTALL spatial;
-    LOAD spatial;
-    CALL register_geoarrow_extensions();
-    "
-  )
+  if (site != "aus") {
+    DBI::dbExecute(
+      conn,
+      "
+      INSTALL spatial;
+      LOAD spatial;
+      CALL register_geoarrow_extensions();
+      "
+    )
+  }
   if (site %in% c("ls3", "ssp")) {
     refresh_secret(conn)
     DBI::dbExecute(
@@ -31,11 +33,11 @@ get_conn <- function(dbdir = ":memory:") {
       SET s3_url_style = 'path';
       "
     )
+    DBI::dbExecute(
+      conn,
+      "SET temp_directory = '/tmp/duckdb_swap';"
+    )
   }
-  DBI::dbExecute(
-    conn,
-    "SET temp_directory = '/tmp/duckdb_swap';"
-  )
   conn
 }
 
