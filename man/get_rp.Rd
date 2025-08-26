@@ -4,7 +4,7 @@
 \alias{get_rp}
 \title{Renvoie une liste des tables du RP21}
 \usage{
-get_rp(conn, an, src = c("gen", "edl", "dmtr"), verbose = FALSE)
+get_rp(conn, an, src = c("gen", "edl", "misc"), verbose = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
@@ -21,5 +21,6 @@ conn <- get_conn()
 trp21 <- get_rp21(conn)
 # population France
 trp21$pind |>
+  dplyr::filter(dc < "975") |>
   dplyr::count(wt = ipondi)
 }
