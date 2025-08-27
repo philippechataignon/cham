@@ -91,12 +91,16 @@ tbl_list <- function(conn, paths, level = 0, lower = FALSE, verbose = FALSE) {
 site = get_site()
 if (site == "ls3") {
   s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
+} else if (site == "ssp") {
+  s3perso <- paste0("s3://", Sys.getenv("IDEP"))
 } else {
   s3perso <- "~/work"
 }
 
 if (site == "ls3") {
   s3expl <- "s3://insee/sern-div-exploitations-statistiques-rp"
+} else if (site == "ssp") {
+  s3expl <- paste0("s3://", Sys.getenv("IDEP"), "/exploitation")
 } else {
   s3expl <- "~/work/insee"
 }
