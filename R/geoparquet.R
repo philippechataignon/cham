@@ -89,27 +89,33 @@ write_geoparquet <- function (sf, dsn, verbose=F)
   if (missing(dsn)) {
     stop("Missing output file")
   }
-  sf::st_geometry(sf) = "geometry"
-  geom_col = attr(sf, "sf_column")
+  # reference: https://github.com/geopandas/geo-arrow-spec
+  geom_cols <- lapply(sf, function(i) inherits(i, "sfc"))
+  geom_cols <- names(which(geom_cols==TRUE))
   col_meta <- list()
-  col_meta[[geom_col]] <- list(
-    crs = jsonlite::fromJSON(sf::st_as_text(sf::st_crs(sf[[geom_col]]), projjson=T)),
-    encoding = "WKB",
-    geometry_types = list()
-  )
+
+  for(col in geom_cols){
+    col_meta[[col]] <- list(
+      crs = jsonlite::fromJSON(sf::st_as_text(sf::st_crs(sf[[col]]), projjson=T)),
+      encoding = "WKB",
+      geometry_types = list()
+    )
+  }
   geo_metadata <- list(
+    primary_column = attr(sf, "sf_column"),
     version = "1.1.0",
-    primary_column = geom_col,
     columns = col_meta
   )
   geo_metadata = jsonlite::toJSON(geo_metadata, auto_unbox=T)
   if (verbose)
     cat(jsonlite::prettify(geo_metadata), "\n")
-  df <- as.data.frame(sf)
-  obj_geo <- sf::st_as_binary(df[[geom_col]])
-  attr(obj_geo, "class") <- c("arrow_binary", "vctrs_vctr", attr(obj_geo, "class"), "list")
-  df[[geom_col]] <- obj_geo
-  tbl <- arrow::Table$create(df)
+
+  for(col in geom_cols){
+    obj_geo <- sf::st_as_binary(sf[[col]])
+    attr(obj_geo, "class") <- c("arrow_binary", "vctrs_vctr", attr(obj_geo, "class"), "list")
+    sf[[col]] <- obj_geo
+  }
+  tbl <- arrow::Table$create(sf)
   tbl$metadata[["geo"]] <- geo_metadata
   arrow::write_parquet(tbl, sink = dsn, compression = "zstd")
   invisible(sf)
