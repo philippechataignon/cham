@@ -57,22 +57,27 @@ read_geoparquet <- function(file, crs=NULL, method = c("duckarrow", "st_read", "
       crs_dest = paste0("EPSG:", crs)
     else
       crs_dest = crs
-    if (!convert) {
-      sql_geom = paste0("st_aswkb(", geom, ")")
-    } else {
-      sql_geom = paste0("st_aswkb(st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  xy := true))")
-    }
-    q = paste0(
-      "SELECT * REPLACE (", sql_geom, " as geometry)
-      FROM read_parquet('", file, "')"
-    )
-    if (verbose)
-      cat(q, "\n")
-    if (method == "st_read") {
-      ret = sf::st_read(conn, query = q, geometry_column = "geometry", as_tibble=T) |>
-        sf::st_set_crs(crs_dest)
+    if (method == "st_read" || (method == "duckarrow" && convert)) {
+      if (!convert) {
+        sql_geom = paste0("st_aswkb(", geom, ")")
+      } else {
+        sql_geom = paste0("st_aswkb(st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  xy := true))")
+      }
+      q = paste0(
+        "SELECT * REPLACE (", sql_geom, " as geometry)
+        FROM read_parquet('", file, "')"
+      )
+      if (verbose)
+        cat(q, "\n")
+      if (method == "st_read") {
+        ret = sf::st_read(conn, query = q, geometry_column = "geometry", as_tibble=T) |>
+          sf::st_set_crs(crs_dest)
+      } else {
+        ret = tbl(conn, sql(q)) |>
+          tbl2sf(crs=crs_dest)
+      }
     } else if (method == "duckarrow") {
-      ret = tbl(conn, sql(q)) |>
+      ret = tbl_pqt(conn, file) |>
         tbl2sf(crs=crs_dest)
     }
   }
