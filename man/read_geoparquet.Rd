@@ -9,6 +9,7 @@ read_geoparquet(
   crs = NULL,
   method = c("duckarrow", "st_read", "geoarrow"),
   convert = F,
+  flip = F,
   verbose = F
 )
 }

@@ -14,7 +14,14 @@ tbl2sf <- function(
 
 #' Permet de lire un fichier geoparquet en sf
 #' @export
-read_geoparquet <- function(file, crs=NULL, method = c("duckarrow", "st_read", "geoarrow"), convert = F, verbose=F)
+read_geoparquet <- function(
+  file,
+  crs=NULL,
+  method = c("duckarrow", "st_read", "geoarrow"),
+  convert = F,
+  flip = F,
+  verbose=F
+)
 {
   method = match.arg(method)
   is_s3 = grepl("^s3://", file)
@@ -58,11 +65,13 @@ read_geoparquet <- function(file, crs=NULL, method = c("duckarrow", "st_read", "
     else
       crs_dest = crs
     if (method == "st_read" || (method == "duckarrow" && convert)) {
-      if (!convert) {
-        sql_geom = paste0("st_aswkb(", geom, ")")
-      } else {
-        sql_geom = paste0("st_aswkb(st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  xy := true))")
+      if (convert) {
+        if (flip)
+        geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  xy := false)")
+      else
+        geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  xy := true)")
       }
+      sql_geom = paste0("st_aswkb(", geom, ")")
       q = paste0(
         "SELECT * REPLACE (", sql_geom, " as geometry)
         FROM read_parquet('", file, "')"
