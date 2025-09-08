@@ -8,7 +8,7 @@ tbl2sf <- function(
     table |>
       arrow::to_arrow() |>
       sf::st_as_sf(crs = crs) |>
-      as_tibble() |>
+      tibble::as_tibble() |>
       sf::st_as_sf(crs = crs)
 }
 
@@ -34,8 +34,9 @@ read_geoparquet <- function(
     if (is.null(crs))
       crs = "OGC:CRS84"
     open_dataset(file) |>
+    arrow::open_dataset(file) |>
       sf::st_as_sf(crs=crs) |>
-      as_tibble() |>
+      tibble::as_tibble() |>
       sf::st_as_sf(crs=crs) -> ret
   } else {
     conn = get_conn()
