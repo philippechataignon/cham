@@ -32,8 +32,7 @@ read_geoparquet <- function(
       stop("Pas de conversion possible avec la méthode 'geoarrow'")
     require(geoarrow)
     if (is.null(crs))
-      crs = "OGC:CRS84"
-    open_dataset(file) |>
+      crs = "EPSG:4326"
     arrow::open_dataset(file) |>
       sf::st_as_sf(crs=crs) |>
       tibble::as_tibble() |>
@@ -58,7 +57,7 @@ read_geoparquet <- function(
       sep=":"
     )
     if (length(crs_src) == 0)
-      crs_src = "OGC:CRS84"
+      crs_src = "EPSG:4326"
     if (is.null(crs))
       crs_dest = crs_src
     else if (is.numeric(crs))
@@ -69,9 +68,8 @@ read_geoparquet <- function(
       if (convert) {
         geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
       }
-      sql_geom = paste0("st_aswkb(", geom, ")")
       q = paste0(
-        "SELECT * REPLACE (", sql_geom, " as geometry)
+        "SELECT * REPLACE (", geom, " as geometry)
         FROM read_parquet('", file, "')"
       )
       if (verbose)
