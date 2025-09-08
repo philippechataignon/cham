@@ -4,14 +4,7 @@
 \alias{read_geoparquet}
 \title{Permet de lire un fichier geoparquet en sf}
 \usage{
-read_geoparquet(
-  file,
-  crs = NULL,
-  method = c("duckarrow", "st_read", "geoarrow"),
-  convert = F,
-  xy = F,
-  verbose = F
-)
+read_geoparquet(file, crs = NULL, transform = F, xy = F, verbose = F)
 }
 \description{
 Permet de lire un fichier geoparquet en sf

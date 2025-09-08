@@ -17,75 +17,57 @@ tbl2sf <- function(
 read_geoparquet <- function(
   file,
   crs=NULL,
-  method = c("duckarrow", "st_read", "geoarrow"),
-  convert = F,
+  transform = F,
   xy = F,
   verbose=F
 )
 {
-  method = match.arg(method)
   is_s3 = grepl("^s3://", file)
   if (!is_s3 & !file.exists(file))
     stop("Le fichier ", file, " n'existe pas")
+  if (transform && is.null(crs))
+    stop("La paramètre 'crs' est obligatoire avec 'transform'")
   require(geoarrow)
-  if (method == "geoarrow") {
-    if (convert | is_s3)
-      stop("Pas de conversion possible avec la méthode 'geoarrow'")
-    if (is.null(crs))
-      crs = "EPSG:4326"
-    arrow::open_dataset(file) |>
-      sf::st_as_sf(crs=crs) |>
-      tibble::as_tibble() |>
-      sf::st_as_sf(crs=crs) -> ret
-  } else {
-    conn = get_conn()
-    meta = DBI::dbGetQuery(
-      conn,
-      paste0("
-      SELECT decode(value)
-      FROM parquet_kv_metadata('", file, "')
-      WHERE key='geo'
-      ")
-    )[1,]
-    if (verbose)
-      cat(jsonlite::prettify(meta), "\n")
-    meta = jsonlite::fromJSON(meta)
-    geom = meta$primary_column
-    crs_src = paste(
-      meta$columns$geometry$crs$id$authority,
-      meta$columns$geometry$crs$id$code,
-      sep=":"
+  conn_temp = get_conn(new = T)
+  meta = DBI::dbGetQuery(
+    conn_temp,
+    paste0("
+    SELECT decode(value)
+    FROM parquet_kv_metadata('", file, "')
+    WHERE key='geo'
+    ")
+  )[1,]
+  if (verbose)
+    cat(jsonlite::prettify(meta), "\n")
+  meta = jsonlite::fromJSON(meta)
+  geom = meta$primary_column
+  crs_src = paste(
+    meta$columns$geometry$crs$id$authority,
+    meta$columns$geometry$crs$id$code,
+    sep=":"
+  )
+  if (length(crs_src) == 0)
+    crs_src = "EPSG:4326"
+  if (is.null(crs))
+    crs_dest = crs_src
+  else if (is.numeric(crs))
+    crs_dest = paste0("EPSG:", crs)
+  else
+    crs_dest = crs
+  if (transform) {
+    geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
+    q = paste0(
+      "SELECT * REPLACE (", geom, " as geometry)
+      FROM read_parquet('", file, "')"
     )
-    if (length(crs_src) == 0)
-      crs_src = "EPSG:4326"
-    if (is.null(crs))
-      crs_dest = crs_src
-    else if (is.numeric(crs))
-      crs_dest = paste0("EPSG:", crs)
-    else
-      crs_dest = crs
-    if (method == "st_read" || (method == "duckarrow" && convert)) {
-      if (convert) {
-        geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
-      }
-      q = paste0(
-        "SELECT * REPLACE (", geom, " as geometry)
-        FROM read_parquet('", file, "')"
-      )
-      if (verbose)
-        cat(q, "\n")
-      if (method == "st_read") {
-        ret = sf::st_read(conn, query = q, geometry_column = "geometry", as_tibble=T) |>
-          sf::st_set_crs(crs_dest)
-      } else {
-        ret = tbl(conn, sql(q)) |>
-          tbl2sf(crs=crs_dest)
-      }
-    } else if (method == "duckarrow") {
-      ret = tbl_pqt(conn, file) |>
-        tbl2sf(crs=crs_dest)
-    }
+    if (verbose)
+      cat(q, "\n")
+    ret = tbl(conn_temp, sql(q))
+  } else {
+    ret = tbl_pqt(conn_temp, file)
   }
+  ret = tbl2sf(ret, crs=crs_dest)
+  dbDisconnect(conn_temp)
   ret
 }
 
