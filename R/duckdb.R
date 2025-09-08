@@ -1,10 +1,11 @@
 #' Renvoie une connexion duckdb
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
+#' @param new : si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut
 #' @export
-get_conn <- function(dbdir = ":memory:") {
+get_conn <- function(dbdir = ":memory:", new = F) {
   # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
   if (
-    (!exists("conn") || !DBI::dbIsValid(conn)) ||
+    (new || !exists("conn") || !DBI::dbIsValid(conn)) ||
       basename(conn@driver@dbdir) != dbdir
   ) {
     conn = DBI::dbConnect(
