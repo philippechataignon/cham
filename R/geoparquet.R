@@ -27,10 +27,10 @@ read_geoparquet <- function(
   is_s3 = grepl("^s3://", file)
   if (!is_s3 & !file.exists(file))
     stop("Le fichier ", file, " n'existe pas")
+  require(geoarrow)
   if (method == "geoarrow") {
     if (convert | is_s3)
       stop("Pas de conversion possible avec la méthode 'geoarrow'")
-    require(geoarrow)
     if (is.null(crs))
       crs = "EPSG:4326"
     arrow::open_dataset(file) |>
