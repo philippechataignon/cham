@@ -15,31 +15,21 @@ tbl2sf <- function(
 #' Permet de lire un fichier geoparquet en sf
 #' @export
 read_geoparquet <- function(
-  file,
+  path,
   crs=NULL,
   transform = F,
   xy = F,
   verbose=F
 )
 {
-  is_s3 = grepl("^s3://", file)
-  if (!is_s3 & !file.exists(file))
-    stop("Le fichier ", file, " n'existe pas")
+  is_s3 = grepl("^s3://", path)
+  if (!is_s3 & !file.exists(path))
+    stop("Le fichier ", path, " n'existe pas")
   if (transform && is.null(crs))
     stop("La paramètre 'crs' est obligatoire avec 'transform'")
   require(geoarrow)
   conn_temp = get_conn(new = T)
-  meta = DBI::dbGetQuery(
-    conn_temp,
-    paste0("
-    SELECT decode(value)
-    FROM parquet_kv_metadata('", file, "')
-    WHERE key='geo'
-    ")
-  )[1,]
-  if (verbose)
-    cat(jsonlite::prettify(meta), "\n")
-  meta = jsonlite::fromJSON(meta)
+  meta = get_geometadata(path, verbose=verbose)
   geom = meta$primary_column
   crs_src = paste(
     meta$columns$geometry$crs$id$authority,
@@ -58,30 +48,29 @@ read_geoparquet <- function(
     geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
     q = paste0(
       "SELECT * REPLACE (", geom, " as geometry)
-      FROM read_parquet('", file, "')"
+      FROM read_parquet('", path, "')"
     )
     if (verbose)
       cat(q, "\n")
     ret = tbl(conn_temp, sql(q))
   } else {
-    ret = tbl_pqt(conn_temp, file)
+    ret = tbl_pqt(conn_temp, path)
   }
   ret = tbl2sf(ret, crs=crs_dest)
-  dbDisconnect(conn_temp)
+  DBI::dbDisconnect(conn_temp)
   ret
 }
 
 #' Permet d'écrire un fichier geoparquet en sf
 #' @export
-write_geoparquet <- function (sf, dsn, verbose=F)
+write_geoparquet <- function (sf, path, verbose=F)
 {
   if (!inherits(sf, "sf")) {
     stop("Must be sf data format")
   }
-  if (missing(dsn)) {
+  if (missing(path)) {
     stop("Missing output file")
   }
-  # reference: https://github.com/geopandas/geo-arrow-spec
   geom_cols <- lapply(sf, function(i) inherits(i, "sfc"))
   geom_cols <- names(which(geom_cols==TRUE))
   col_meta <- list()
@@ -109,7 +98,7 @@ write_geoparquet <- function (sf, dsn, verbose=F)
   }
   tbl <- arrow::Table$create(sf)
   tbl$metadata[["geo"]] <- geo_metadata
-  arrow::write_parquet(tbl, sink = dsn, compression = "zstd")
+  arrow::write_parquet(tbl, sink = path, compression = "zstd")
   invisible(sf)
 }
 
@@ -120,4 +109,41 @@ get_h3map <- function(hex_id)
   rbindlist(cellToBoundary(hex_id), idcol="id") |>
     sf::sf_polygon("lat", "lng", polygon_id="id") |>
     sf::st_sf(crs=4326)
+}
+
+#' Récupère les métadonnées géographiques
+#' @export
+get_geometadata <- function(path, valid=T, verbose=T)
+{
+  meta = arrow::open_dataset(path)$metadata
+  if (!"geo" %in% names(meta)) {
+    stop("No 'geo' entry in file metadata")
+  }
+  if (verbose)
+    cat(jsonlite::prettify(meta), "\n")
+  meta = jsonlite::fromJSON(meta$geo)
+  if (valid) {
+    req_names <- c("version", "primary_column", "columns")
+    for(n in req_names){
+      if(!n %in% names(meta)){
+        stop(paste0("Required name: '", n, "' not found in geo metadata"))
+      }
+    }
+    if (meta$version < "1") {
+      stop("Minimal version is 1.0.0. Found ", meta$version)
+    }
+    req_geo_names <- c("geometry_types", "encoding")
+    for (c in names(meta$columns)){
+      geo_col <- meta$columns[[c]]
+      for(ng in req_geo_names){
+        if(geo_col[["encoding"]] != "WKB"){
+          stop("Only well-known binary (WKB) encoding is currently supported.")
+        }
+        if(!ng %in% names(geo_col)){
+          stop(paste0("Required 'geo' metadata item '", ng, "' not found in ", c))
+        }
+      }
+    }
+  }
+  meta
 }

@@ -4,7 +4,7 @@
 \alias{write_geoparquet}
 \title{Permet d'écrire un fichier geoparquet en sf}
 \usage{
-write_geoparquet(sf, dsn, verbose = F)
+write_geoparquet(sf, path, verbose = F)
 }
 \description{
 Permet d'écrire un fichier geoparquet en sf
