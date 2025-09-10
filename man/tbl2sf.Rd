@@ -4,7 +4,7 @@
 \alias{tbl2sf}
 \title{Permet de transformer une table duckdb en sf}
 \usage{
-tbl2sf(table, crs)
+tbl2sf(table, crs, as.tibble = T)
 }
 \description{
 Permet de transformer une table duckdb en sf

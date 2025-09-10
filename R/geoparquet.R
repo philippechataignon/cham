@@ -2,14 +2,19 @@
 #' @export
 tbl2sf <- function(
     table,
-    crs
+    crs,
+    as.tibble = T
 )
 {
-    table |>
-      arrow::to_arrow() |>
-      sf::st_as_sf(crs = crs) |>
+  ret = table |>
+    arrow::to_arrow() |>
+    sf::st_as_sf(crs = crs)
+  if (as.tibble) {
+    ret = ret |>
       tibble::as_tibble() |>
       sf::st_as_sf(crs = crs)
+  }
+  ret
 }
 
 #' Permet de lire un fichier geoparquet en sf
@@ -19,6 +24,7 @@ read_geoparquet <- function(
   crs=NULL,
   transform = F,
   xy = F,
+  as.tibble = T,
   verbose=F
 )
 {
@@ -56,7 +62,7 @@ read_geoparquet <- function(
   } else {
     ret = tbl_pqt(conn_temp, path)
   }
-  ret = tbl2sf(ret, crs=crs_dest)
+  ret = tbl2sf(ret, crs=crs_dest, as.tibble=as.tibble)
   DBI::dbDisconnect(conn_temp)
   ret
 }
