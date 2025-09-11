@@ -34,7 +34,7 @@ nom du fichier/répertoire
 }
 \examples{
 s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
-# Fichier simple ear_fam.parquet dasn répertoire dir sous s3
+# Fichier simple ear_fam.parquet dans répertoire dir sous s3
 outfile = write_duckdb_parquet(ear_fam, dir = s3expl)
 # Fichier simple ear_fam.parquet trié dans répertoire courant
 outfile = write_duckdb_parquet(ear_fam, order_by=c("var1", "var2"))

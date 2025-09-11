@@ -19,7 +19,7 @@ geo <- function(path)
 gen <- function(path)
 {
   if (site %in% c("ls3", "ssp")) {
-    ret = file.path("s3://mad/insee", path)
+    ret = file.path("s3://public/gen-mad", path)
   } else if (site == "aus") {
     ret = file.path("W:", path)
   } else {
