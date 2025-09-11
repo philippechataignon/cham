@@ -4,9 +4,10 @@
 #' @export
 get_conn <- function(dbdir = ":memory:", new = F) {
   # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
+  if (new)
+    suppressWarnings(dbDisconnect(conn))
   if (
-    (new || !exists("conn") || !DBI::dbIsValid(conn)) ||
-      basename(conn@driver@dbdir) != dbdir
+    (new || !exists("conn") || !DBI::dbIsValid(conn)) || basename(conn@driver@dbdir) != dbdir
   ) {
     conn = DBI::dbConnect(
       duckdb::duckdb(),
