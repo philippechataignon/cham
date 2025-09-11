@@ -64,7 +64,7 @@ tbl_pqt <- function(conn, path, level = 0, lower = FALSE, verbose = FALSE) {
   cmd <- paste0(
     "read_parquet([",
     paste(paste0("'", path, "'"), collapse = ","),
-    "])"
+    "], hive_partitioning = true)"
   )
   if (verbose) {
     cat(cmd, "\n")
