@@ -3,7 +3,7 @@
 export(arrondi_entier)
 export(attach_db)
 export(download)
-export(downzip)
+export(download_archive)
 export(drop_temp)
 export(ear_ext)
 export(ecart)

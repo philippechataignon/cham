@@ -49,46 +49,51 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
 
 
 #' Télécharge un fichier si absent
-#' @param url: URL du fichier zip
+#' @param url: URL du fichier
 #' @param file: chemin du fichier destination, par défaut extrait de l'url
 #' @param dir: chemin du fichier destination, par défaut la variable
 #'   d'environnement DOWNLOAD_DIR si elle existe, sinon répertoire temporaire
 #' @param force: TRUE pour forcer le téléchargement même si le fichier existe,
 #'   FALSE par défaut
 #' @export
-download <- function(url, file, dir, force = FALSE) {
-  if (missing(file)) {
-    file = basename(url)
+download <- function(url, destfile, dir = NULL, force = FALSE, verbose = FALSE) {
+  if (missing(destfile)) {
+    destfile = basename(url)
   }
-  if (missing(dir)) {
-    dir = fcoalesce(Sys.getenv("DOWNLOAD_DIR", unset = NA), tempdir())
-  }
-  path = file.path(dir, file)
-  if (force || !file.exists(path)) {
-    ret = download.file(url, path)
+  if (is.null(dir)) {
+    path = destfile
   } else {
-    cat(path, "present", "\n")
+    path = file.path(dir, destfile)
+  }
+  if (force || !file.exists(path)) {
+    ret = download.file(url, path, mode="wb")
+      if (verbose)
+        cat(path, "downloaded\n")
+  } else {
+    if (verbose)
+      cat(path, "already present\n")
   }
   path
 }
 
 
-#' Télécharge et décompresse un csv zippé
-#' @param url: URL du fichier zip
-#' @param keep: TRUE pour conserver le zip téléchargé, FALSE par défaut
+#' Télécharge et décompresse une fichier compressé
+#' @param url: URL du fichier
+#' @param keep: TRUE pour conserver le fichier téléchargé et l'extraction
 #' @export
-downzip <- function(url, keep = F) {
-  zipfile = tempfile()
-  download.file(url = url, destfile = zipfile, method = "curl", mode="wb")
-  biggest = zip::zip_list(zipfile) |>
-    arrange(compressed_size) |>
-    tail(1) |>
-    pull(filename)
-  ret = fread(cmd = paste("unzip -p", zipfile, biggest))
-  if (!keep) {
-    unlink(zipfile)
+download_archive <- function (url, dir = NULL, force = FALSE, verbose = FALSE)
+{
+  if (is.null(dir)) {
+    dirout = tempdir()
+  } else {
+    dirout = dir
   }
-  ret
+  archfile = download(url, dir = dir, force = force)
+  biggest = dplyr::pull(tail(dplyr::arrange(archive::archive(archfile), size),  1), path)
+  outfile = archive::archive_extract(archfile, dir=dirout, file=biggest)
+  if (verbose)
+    cat(archfile, " downloaded, extract ", outfile, " in ", dirout, "\n")
+  file.path(dirout, outfile)
 }
 
 #' Récupère URL du fichier données melodi depuis un id source

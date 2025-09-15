@@ -4,10 +4,10 @@
 \alias{download}
 \title{Télécharge un fichier si absent}
 \usage{
-download(url, file, dir, force = FALSE)
+download(url, destfile, dir = NULL, force = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{url:}{URL du fichier zip}
+\item{url:}{URL du fichier}
 
 \item{file:}{chemin du fichier destination, par défaut extrait de l'url}
 
