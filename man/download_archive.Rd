@@ -4,7 +4,7 @@
 \alias{download_archive}
 \title{Télécharge et décompresse une fichier compressé}
 \usage{
-download_archive(url, dir = NULL, force = FALSE, verbose = FALSE)
+download_archive(url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{url:}{URL du fichier}

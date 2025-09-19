@@ -81,7 +81,7 @@ download <- function(url, destfile, dir = NULL, force = FALSE, verbose = FALSE) 
 #' @param url: URL du fichier
 #' @param keep: TRUE pour conserver le fichier téléchargé et l'extraction
 #' @export
-download_archive <- function (url, dir = NULL, force = FALSE, verbose = FALSE)
+download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 {
   if (is.null(dir)) {
     dirout = tempdir()
@@ -89,10 +89,17 @@ download_archive <- function (url, dir = NULL, force = FALSE, verbose = FALSE)
     dirout = dir
   }
   archfile = download(url, dir = dir, force = force)
-  biggest = dplyr::pull(tail(dplyr::arrange(archive::archive(archfile), size),  1), path)
-  outfile = archive::archive_extract(archfile, dir=dirout, file=biggest)
+  file_list = archive::archive(archfile) |>
+    arrange(size)
   if (verbose)
-    cat(archfile, " downloaded, extract ", outfile, " in ", dirout, "\n")
+    print(file_list)
+  if (is.null(file))
+    extract_file = dplyr::pull(tail(file_list,  1), path)
+  else
+    extract_file = file
+  outfile = archive::archive_extract(archfile, dir=dirout, file=extract_file)
+  if (verbose)
+    cat(archfile, "downloaded, extract", outfile, "in", dirout, "\n")
   file.path(dirout, outfile)
 }
 
