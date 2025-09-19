@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.jj$
+compile_pkg.R  
+create_source.sh
