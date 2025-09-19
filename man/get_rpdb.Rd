@@ -4,7 +4,7 @@
 \alias{get_rpdb}
 \title{Renvoie une liste des tables RP depuis base duckdb}
 \usage{
-get_rpdb(conn, an, type = "rp")
+get_rpdb(conn, an, type = "rp", crypt = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}

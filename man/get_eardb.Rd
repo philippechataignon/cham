@@ -4,7 +4,7 @@
 \alias{get_eardb}
 \title{Renvoie une liste des tables EAR depuis base duckdb}
 \usage{
-get_eardb(conn, an, db = "ear")
+get_eardb(conn, an, db = "ear", crypt = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}

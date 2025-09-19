@@ -98,20 +98,26 @@ get_rp <- function(conn, an, src = c("gen", "edl", "misc"), verbose = FALSE) {
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @export
-attach_db <- function(conn, path, db) {
+attach_db <- function(conn, path, db, crypt=FALSE) {
   if (missing(db)) {
     db = path
   }
   DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
-  DBI::dbExecute(
-    conn,
-    paste0(
-      "ATTACH '",
-      file.path(s3perso, "duckdb", paste0(path, ".duckdb")),
-      "' as ",
-      db
-    )
+  cmd = paste0(
+    "ATTACH '",
+    file.path(s3perso, "duckdb", paste0(path, ".duckdb")),
+    "' as ",
+    db
   )
+  if (crypt) {
+    cmd = paste0(
+      cmd,
+      "(encryption_key '",
+      Sys.getenv("DUCKDB_ENCRYPTION_KEY"),
+      "')"
+    )
+  }
+  DBI::dbExecute(conn, cmd)
   db
 }
 
@@ -120,8 +126,8 @@ attach_db <- function(conn, path, db) {
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @export
-get_rpdb <- function(conn, an, type="rp") {
-  db = attach_db(conn, path=paste0(type, an))
+get_rpdb <- function(conn, an, type="rp", crypt=FALSE) {
+  db = attach_db(conn, path=paste0(type, an), crypt=crypt)
   lapplyn(rp_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
 }
 
@@ -129,8 +135,8 @@ get_rpdb <- function(conn, an, type="rp") {
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
 #' @return Liste de 4 éléments nommés 'ind', 'log', 'fam' et 'liens'
 #' @export
-get_eardb <- function(conn, an, db = "ear") {
-  db = attach_db(conn, path=paste0(db, an))
+get_eardb <- function(conn, an, db = "ear", crypt=FALSE) {
+  db = attach_db(conn, path=paste0(db, an), crypt=crypt)
   lapplyn(ear_ext, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
 }
 

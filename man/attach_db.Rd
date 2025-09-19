@@ -4,7 +4,7 @@
 \alias{attach_db}
 \title{Renvoie une liste des tables RP depuis base duckdb}
 \usage{
-attach_db(conn, path, db)
+attach_db(conn, path, db, crypt = FALSE)
 }
 \arguments{
 \item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
