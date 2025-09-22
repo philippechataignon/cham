@@ -155,3 +155,47 @@ refresh_secret <- function(conn) {
     )
   )
 }
+
+#' Attach une base duckdb à une connexion
+#' @param conn: connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param path: nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
+#'        (s3perso)/duckdb
+#' @param db: nom de l'alias de la base, par défaut path
+#' @param crypt: si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée
+#' @return Nom de la base duckdb
+#' @export
+attach_db <- function(conn, name, db=NULL, crypt=FALSE) {
+  if (is.null(db)) {
+    db = name
+  }
+  if (grepl("crypt", name, fixed=T)) {
+    crypt = TRUE
+  }
+  DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
+  cmd = paste0(
+    "ATTACH '",
+    file.path(s3perso, "duckdb", paste0(name, ".duckdb")),
+    "' as ",
+    db
+  )
+  if (crypt) {
+    cmd = paste0(
+      cmd,
+      "(encryption_key '",
+      Sys.getenv("DUCKDB_ENCRYPTION_KEY"),
+      "')"
+    )
+  }
+  DBI::dbExecute(conn, cmd)
+  db
+}
+
+#' Renvoie une liste de tables depuis une base duckdb
+#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @return Liste de tables
+#' @export
+tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
+  db = attach_db(conn, name, db, crypt=crypt)
+  tables = dbGetQuery(conn, paste("SHOW TABLES FROM", db))$name
+  lapplyn(tables, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
+}
