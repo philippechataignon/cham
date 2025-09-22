@@ -15,7 +15,7 @@ get_conn <- function(dbdir = ":memory:", new = F) {
       bigint = "integer64"
     )
   }
-  if (site != "aus") {
+  if (site %in% c("ls3", "ssp", "pc")) {
     DBI::dbExecute(
       conn,
       "
@@ -26,7 +26,6 @@ get_conn <- function(dbdir = ":memory:", new = F) {
     )
   }
   if (site %in% c("ls3", "ssp")) {
-    refresh_secret(conn)
     DBI::dbExecute(
       conn,
       "
@@ -38,6 +37,16 @@ get_conn <- function(dbdir = ":memory:", new = F) {
     DBI::dbExecute(
       conn,
       "SET temp_directory = '/tmp/duckdb_swap';"
+    )
+    refresh_secret(conn)
+  }
+  if (site %in% c("ssp", "pc")) {
+    DBI::dbExecute(
+      conn,
+      "
+      INSTALL h3 from community;
+      LOAD h3;
+      "
     )
   }
   conn
