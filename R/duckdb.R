@@ -14,7 +14,10 @@ get_conn <- function(dbdir = ":memory:", new = F) {
     )
   }
   if (site == "ls3") {
-    dbExecute(conn, "set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/'")
+    dbExecute(
+      conn,
+      "set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/'"
+    )
   }
   if (site %in% c("ls3", "ssp", "pc")) {
     DBI::dbExecute(
@@ -42,13 +45,10 @@ get_conn <- function(dbdir = ":memory:", new = F) {
     refresh_secret(conn)
   }
   if (site %in% c("ssp", "pc")) {
-    DBI::dbExecute(
-      conn,
-      "
-      INSTALL h3 from community;
-      LOAD h3;
-      "
-    )
+    DBI::dbExecute( conn, "INSTALL h3 from community")
+  }
+  if (site %in% c("ssp", "pc", "ls3")) {
+    DBI::dbExecute( conn, "LOAD h3")
   }
   conn
 }
