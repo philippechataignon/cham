@@ -177,6 +177,19 @@ attach_db <- function(conn, path, db, crypt=FALSE) {
   invisible(db)
 }
 
+#' Renvoie une liste de tables depuis une database duckdb
+#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param db: nom de la database
+#' @return Liste de tables dplyr
+#' @export
+tbl_db <- function(conn, db, verbose=FALSE) {
+  tables = dbGetQuery(conn, paste("SHOW TABLES FROM", db))$name
+  if (verbose) {
+    print(tables)
+  }
+  lapplyn(tables, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
+}
+
 #' Renvoie une liste de tables depuis une base duckdb
 #' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
 #' @param name: nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
@@ -193,6 +206,5 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
     crypt = TRUE
   }
   db = attach_db(conn, path = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
-  tables = dbGetQuery(conn, paste("SHOW TABLES FROM", db))$name
-  lapplyn(tables, function(x) dplyr::tbl(conn, paste0(db, ".", x)))
+  tbl_db(conn, db)
 }
