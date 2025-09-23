@@ -13,6 +13,9 @@ get_conn <- function(dbdir = ":memory:", new = F) {
       bigint = "integer64"
     )
   }
+  if (site == "ls3") {
+    dbExecute(conn, "set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/'")
+  }
   if (site %in% c("ls3", "ssp", "pc")) {
     DBI::dbExecute(
       conn,
