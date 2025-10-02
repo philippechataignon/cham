@@ -1,8 +1,13 @@
 #' Renvoie une connexion duckdb
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
 #' @param new : si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut
+#' @param simple : si TRUE, renvoit une connexion comme un simple dbConnect, FALSE par défaut
 #' @export
-get_conn <- function(dbdir = ":memory:", new = F) {
+get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
+  user = Sys.getenv("IDEP")
+  if (simple) {
+    return(DBI::dbConnect(duckdb::duckdb()))
+  }
   # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
   if (
     (new || !exists("conn") || !DBI::dbIsValid(conn)) || basename(conn@driver@dbdir) != dbdir
@@ -13,42 +18,34 @@ get_conn <- function(dbdir = ":memory:", new = F) {
       bigint = "integer64"
     )
   }
-  if (site == "ls3") {
-    dbExecute(
-      conn,
-      "set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/'"
-    )
-  }
-  if (site %in% c("ls3", "ssp", "pc")) {
+  if (site %in% c("ssp", "pc")) {
     DBI::dbExecute(
-      conn,
-      "
-      INSTALL spatial;
-      LOAD spatial;
-      CALL register_geoarrow_extensions();
-      "
-    )
-  }
-  if (site %in% c("ls3", "ssp")) {
-    DBI::dbExecute(
-      conn,
-      "
+      conn, "
       INSTALL httpfs;
       LOAD httpfs;
       SET s3_url_style = 'path';
+      INSTALL spatial;
+      LOAD spatial;
+      CALL register_geoarrow_extensions();
+      INSTALL h3 from community;
+      LOAD h3;
       "
     )
+  }
+  if (site == "ls3") {
     DBI::dbExecute(
-      conn,
-      "SET temp_directory = '/tmp/duckdb_swap';"
-    )
+      conn, "
+      set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/';
+      LOAD httpfs;
+      SET s3_url_style = 'path';
+      LOAD spatial;
+      CALL register_geoarrow_extensions();
+      SET temp_directory = '/tmp/duckdb_swap';
+    ")
     refresh_secret(conn)
   }
-  if (site %in% c("ssp", "pc")) {
-    DBI::dbExecute( conn, "INSTALL h3 from community")
-  }
-  if (site %in% c("ssp", "pc", "ls3")) {
-    DBI::dbExecute( conn, "LOAD h3")
+  if (site == "ls3" && user == "vgkwl1") {
+    DBI::dbExecute(conn, "LOAD h3")
   }
   conn
 }
@@ -210,4 +207,16 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
   }
   db = attach_db(conn, path = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
   tbl_db(conn, db)
+}
+
+#' Installe extensions duckdb depuis le répertoire ~/extensions
+#' @export
+install_extensions <- function()
+{
+  conn = get_conn(simple = T)
+  dir = file.path(Sys.getenv("HOME"), "extensions")
+  system(glue("gunzip {dir}/*"))
+  for (ext in c("httpfs", "spatial", "h3")) {
+    dbExecute(conn, glue("install '{dir}/{ext}.duckdb_extension'"))
+  }
 }

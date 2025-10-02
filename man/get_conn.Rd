@@ -4,12 +4,14 @@
 \alias{get_conn}
 \title{Renvoie une connexion duckdb}
 \usage{
-get_conn(dbdir = ":memory:", new = F)
+get_conn(dbdir = ":memory:", new = F, simple = F)
 }
 \arguments{
 \item{dbdir}{: nom du la base duckdb, par défaut base stockée en mémoire}
 
 \item{new}{: si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut}
+
+\item{simple}{: si TRUE, renvoit une connexion comme un simple dbConnect, FALSE par défaut}
 }
 \description{
 Renvoie une connexion duckdb
