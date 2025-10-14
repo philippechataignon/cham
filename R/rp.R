@@ -63,8 +63,8 @@ get_rp <- function(conn, an, src = c("gen", "edl", "misc"), verbose = FALSE) {
     if (site == "ls3") {
       files = extend(rp_ext, file.path(s3expl, glue::glue("edl/an={an}/{{x}}.parquet")))
     } else if (site == "aus") {
-      an2 = an %% 100
-      angeo2 = (an + 2) %% 100
+      an2 = sprintf("%02d", an %% 100)
+      angeo2 = sprintf("%02d", (an + 2) %% 100)
       cvt = list(
         "pind" = "prin_ind",
         "plog" = "prin_log",
