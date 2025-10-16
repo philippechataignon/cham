@@ -191,3 +191,41 @@ extend <- function(l, pattern) {
 ecart <- function(v1, v2, abs = 0, rel = 0) {
   abs(v2 - v1) < pmax(abs, rel * pmin(v1, v2))
 }
+
+#' Compte le nombre de bits par éléement d'un vecteur entier
+#' @param n : Vecteur d'entiers
+#' @return Nombre de '1' dans l'expression binaire
+#' @examples count_bits(1:16)
+#' @export
+count_bits <- function(n)
+{
+  count = vector("integer", length(n))
+  while(any(n) > 0) {
+    count[n>0] = count[n>0] + 1
+    n[n>0] = bitwAnd(n[n>0], n[n>0]-1)
+  }
+  count
+}
+
+
+#' Crée une valeur de 'grouping' par facililter l'utilsation des fonctions 'cube'
+#' @param x: Vecteur de booleans avec TRUE pour les dimensions présentes
+#' @return Valeur de groupe correspondant
+#' @examples
+#' # Croisement région x statut occupation
+#' group_num(c(reg=T, dep=F, densaav=F, maisappt=F, achev=F, typc=F, stoc=T, surf=F))
+#' # 125 = 255 - (128 + 2)
+#' @export
+group_num <- function(x)
+{
+  ret = 0
+  for (i in 1:length(x)) {
+    # On décale à gauche
+    ret = bitwShiftL(ret, 1)
+    if (x[i]) {
+      ret = bitwOr(ret, 1L)
+      # et on met le dernier bit à 1 si TRUE
+    }
+  }
+  2 ** length(x) - ret - 1
+}
