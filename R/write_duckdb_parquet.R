@@ -1,14 +1,13 @@
 #' @export
 write_duckdb_parquet_raw <- function(
   conn,
-  table,
+  query,
   path,
-  order_by = "",
   partition = "",
   verbose = F
 ) {
   cmd = glue::glue(
-    "COPY (FROM {table} {order_by}) TO '{path}'
+    "COPY ({query}) TO '{path}'
     (FORMAT 'parquet', COMPRESSION 'zstd' {partition})"
   )
   if (verbose) {
@@ -70,9 +69,8 @@ write_duckdb_parquet <- function(
   }
   write_duckdb_parquet_raw(
     conn = table$src$con,
-    table = table$lazy_query$x,
+    query = paste("FROM", table$lazy_query$x, order_by),
     path = path,
-    order_by = order_by,
     partition = partition_str,
     verbose = verbose
   )
