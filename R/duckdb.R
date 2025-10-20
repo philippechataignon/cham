@@ -44,9 +44,6 @@ get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
     ")
     refresh_secret(conn)
   }
-  if (site == "ls3" && user == "vgkwl1") {
-    DBI::dbExecute(conn, "LOAD h3")
-  }
   conn
 }
 
