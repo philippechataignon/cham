@@ -17,6 +17,10 @@ get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
       dbdir = dbdir,
       bigint = "integer64"
     )
+    DBI::dbExecute(conn, "
+        set threads = 4;
+        set preserve_insertion_order = 'false'
+      ")
   }
   if (site %in% c("ssp", "pc")) {
     DBI::dbExecute(
