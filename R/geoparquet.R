@@ -121,13 +121,19 @@ get_h3map <- function(hex_id)
 #' @export
 get_geometadata <- function(path, valid=T, verbose=T)
 {
-  meta = arrow::open_dataset(path)$metadata
-  if (!"geo" %in% names(meta)) {
-    stop("No 'geo' entry in file metadata")
+  # meta = arrow::open_dataset(path)$metadata
+  conn_meta = get_conn(new = T)
+  meta = DBI::dbGetQuery(conn_meta, paste0("
+    select decode(value) as value
+    from parquet_kv_metadata('",
+    path, "') where decode(key) = 'geo'"
+  ))
+  if (nrow(meta) != 1) {
+    stop("No valid geoparquet metadata in file ", path)
   }
   if (verbose)
-    cat(jsonlite::prettify(meta), "\n")
-  meta = jsonlite::fromJSON(meta$geo)
+    cat(jsonlite::prettify(meta$value), "\n")
+  meta = jsonlite::fromJSON(meta$value)
   if (valid) {
     req_names <- c("version", "primary_column", "columns")
     for(n in req_names){
@@ -151,5 +157,6 @@ get_geometadata <- function(path, valid=T, verbose=T)
       }
     }
   }
+  DBI::dbDisconnect(conn_meta)
   meta
 }
