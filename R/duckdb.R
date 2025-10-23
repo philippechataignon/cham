@@ -1,13 +1,89 @@
+#' Crée une connexion globale duckdb 'conn'
+#' @export
+set_conn <- function(ext = c("core", "all", "none"))
+{
+  ext = match.arg(ext)
+  if (exists("conn", env=.GlobalEnv)) {
+    if (!inherits(.GlobalEnv$conn, "duckdb_connection")) {
+      stop("Existing 'conn' global object is not a duckdb connection")
+    }
+    if (DBI::dbIsValid(.GlobalEnv$conn)) {
+      return(invisible(.GlobalEnv$conn))
+    }
+  }
+  conn <<- DBI::dbConnect(
+    duckdb::duckdb(),
+    bigint = "integer64"
+  )
+  DBI::dbExecute(conn, "
+      set threads = 4;
+      set preserve_insertion_order = 'false'
+    ")
+  if (site == "aus") {
+    DBI::dbExecute(conn, "
+        set extension_directory = 'U:/extensions'
+      ")
+  }
+  if (ext %in% c("core", "all")) {
+    DBI::dbExecute(
+      conn, "
+      LOAD httpfs;
+      LOAD spatial;
+      CALL register_geoarrow_extensions();
+    ")
+    refresh_secret(conn)
+  }
+  if (ext %in% c("all")) {
+    DBI::dbExecute(
+      conn, "
+      LOAD h3;
+      LOAD read_stat;
+    ")
+  }
+  invisible(conn)
+}
+
+#' Supprime la connexion globale duckdb 'conn'
+#' @export
+unset_conn <- function()
+{
+  if (exists("conn", env=.GlobalEnv)
+      && inherits(.GlobalEnv$con, "duckdb_connection")
+      && DBI::dbIsValid(.GlobalEnv$con))
+  DBI::dbDisconnect(.GlobalEnv$con)
+  try(rm(list="conn", envir = .GlobalEnv))
+  invisible()
+}
+
+#' Installe les extensions duckdb
+#' @export
+install_extensions <- function(conn, ext = c("core", "all", "none"))
+{
+  ext = match.arg(ext)
+  if (ext %in% c("core", "all")) {
+    DBI::dbExecute(
+      conn, "
+      INSTALL httpfs;
+      INSTALL spatial;
+      "
+    )
+  }
+  if (ext %in% c("all")) {
+    DBI::dbExecute(
+      conn, "
+      INSTALL h3 from community;
+      INSTALL read_stat from community;
+      "
+    )
+  }
+}
+
 #' Renvoie une connexion duckdb
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
 #' @param new : si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut
 #' @param simple : si TRUE, renvoit une connexion comme un simple dbConnect, FALSE par défaut
 #' @export
 get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
-  user = Sys.getenv("IDEP")
-  if (simple) {
-    return(DBI::dbConnect(duckdb::duckdb()))
-  }
   # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
   if (
     (new || !exists("conn") || !DBI::dbIsValid(conn)) || basename(conn@driver@dbdir) != dbdir
@@ -24,8 +100,9 @@ get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
   }
   if (site == "aus") {
     DBI::dbExecute(conn, "
-      set extension_directory = 'U:/extensions'
+      set extension_directory = 'U:/extensions';
     ")
+    refresh_secret(conn)
   }
   if (site %in% c("ssp", "pc")) {
     DBI::dbExecute(
@@ -212,16 +289,4 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
   }
   db = attach_db(conn, path = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
   tbl_db(conn, db)
-}
-
-#' Installe extensions duckdb depuis le répertoire ~/extensions
-#' @export
-install_extensions <- function()
-{
-  conn = get_conn(simple = T)
-  dir = file.path(Sys.getenv("HOME"), "extensions")
-  system(glue("gunzip {dir}/*"))
-  for (ext in c("httpfs", "spatial", "h3")) {
-    dbExecute(conn, glue("install '{dir}/{ext}.duckdb_extension'"))
-  }
 }

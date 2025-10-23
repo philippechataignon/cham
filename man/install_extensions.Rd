@@ -2,10 +2,10 @@
 % Please edit documentation in R/duckdb.R
 \name{install_extensions}
 \alias{install_extensions}
-\title{Installe extensions duckdb depuis le répertoire ~/extensions}
+\title{Installe les extensions duckdb}
 \usage{
-install_extensions()
+install_extensions(conn, ext = c("core", "all", "none"))
 }
 \description{
-Installe extensions duckdb depuis le répertoire ~/extensions
+Installe les extensions duckdb
 }
