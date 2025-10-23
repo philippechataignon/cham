@@ -18,9 +18,14 @@ get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
       bigint = "integer64"
     )
     DBI::dbExecute(conn, "
-        set threads = 4;
-        set preserve_insertion_order = 'false'
-      ")
+      set threads = 4;
+      set preserve_insertion_order = 'false'
+    ")
+  }
+  if (site == "aus") {
+    DBI::dbExecute(conn, "
+      set extension_directory = 'U:/extensions'
+    ")
   }
   if (site %in% c("ssp", "pc")) {
     DBI::dbExecute(
@@ -33,8 +38,7 @@ get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
       CALL register_geoarrow_extensions();
       INSTALL h3 from community;
       LOAD h3;
-      "
-    )
+    ")
   }
   if (site == "ls3") {
     DBI::dbExecute(
