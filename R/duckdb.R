@@ -1,8 +1,8 @@
 #' Crée une connexion globale duckdb 'conn'
 #' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
-#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut
+#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut
 #' @export
-set_conn <- function(ext = c("core", "all", "none"))
+set_conn <- function(ext = c("none", "core", "all"))
 {
   ext = match.arg(ext)
   if (exists("conn", env=.GlobalEnv)) {
@@ -32,9 +32,9 @@ unset_conn <- function()
 #' Renvoie une connexion duckdb
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
 #' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
-#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut
+#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut
 #' @export
-get_conn <- function(dbdir = ":memory:", ext = c("core", "all", "none"))
+get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "all"))
 {
   ext = match.arg(ext)
   conn = DBI::dbConnect(
