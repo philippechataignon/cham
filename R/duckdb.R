@@ -259,3 +259,57 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
   db = attach_db(conn, path = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
   tbl_db(conn, db)
 }
+
+#' Wrapper try_cast duckdb
+#' @examples
+#' p90 |>
+#'  mutate(
+#'    across(
+#'      starts_with(c("N")),
+#'      ~ !!as.int
+#'    )
+#'  )
+#' @export
+as.int =  quote(try_cast(sql(paste(cur_column(), "as integer"))))
+
+#' Wrapper try_cast duckdb
+#' @export
+#' @examples
+#' p90 |>
+#'  mutate(
+#'    across(
+#'      starts_with(c("I")),
+#'      ~ !!as.bool
+#'    )
+#'  )
+as.bool =  quote(try_cast(sql(paste(cur_column(), "as boolean"))))
+
+#' Wrapper try_cast duckdb
+#' @examples
+#' p90 |>
+#'   transmute(
+#'     NPER = !!as_int(NPER),
+#'     NE11M = !!as_int(NE11M),
+#'     INP75M = !!as_bool(INP75M)
+#'   )
+#' @export
+as_int <- function(x) {
+  nom = deparse(substitute(x))
+  inner = paste(nom, "as integer")
+  substitute(try_cast(sql(inner)))
+}
+
+#' Wrapper try_cast duckdb
+#' @examples
+#' p90 |>
+#'   transmute(
+#'     NPER = !!as_int(NPER),
+#'     NE11M = !!as_int(NE11M),
+#'     INP75M = !!as_bool(INP75M)
+#'   )
+#' @export
+as_bool <- function(x) {
+  nom = deparse(substitute(x))
+  inner = paste(nom, "as boolean")
+  substitute(try_cast(sql(inner)))
+}
