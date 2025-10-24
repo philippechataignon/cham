@@ -4,14 +4,13 @@
 \alias{get_conn}
 \title{Renvoie une connexion duckdb}
 \usage{
-get_conn(dbdir = ":memory:", new = F, simple = F)
+get_conn(dbdir = ":memory:", ext = c("core", "all", "none"))
 }
 \arguments{
 \item{dbdir}{: nom du la base duckdb, par défaut base stockée en mémoire}
 
-\item{new}{: si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut}
-
-\item{simple}{: si TRUE, renvoit une connexion comme un simple dbConnect, FALSE par défaut}
+\item{ext:}{indique les extensions chargées. 'core' = httpfs et spatial,
+'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut}
 }
 \description{
 Renvoie une connexion duckdb

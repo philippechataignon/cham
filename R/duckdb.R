@@ -1,4 +1,6 @@
 #' Crée une connexion globale duckdb 'conn'
+#' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
+#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut
 #' @export
 set_conn <- function(ext = c("core", "all", "none"))
 {
@@ -11,18 +13,50 @@ set_conn <- function(ext = c("core", "all", "none"))
       return(invisible(.GlobalEnv$conn))
     }
   }
-  conn <<- DBI::dbConnect(
+  conn <<- get_conn(ext = ext)
+  invisible(conn)
+}
+
+#' Supprime la connexion globale duckdb 'conn'
+#' @export
+unset_conn <- function()
+{
+  if (exists("conn", env=.GlobalEnv)
+      && inherits(.GlobalEnv$con, "duckdb_connection")
+      && DBI::dbIsValid(.GlobalEnv$con))
+  DBI::dbDisconnect(.GlobalEnv$con)
+  try(rm(list="conn", envir = .GlobalEnv))
+  invisible()
+}
+
+#' Renvoie une connexion duckdb
+#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
+#' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
+#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut
+#' @export
+get_conn <- function(dbdir = ":memory:", ext = c("core", "all", "none"))
+{
+  ext = match.arg(ext)
+  conn = DBI::dbConnect(
     duckdb::duckdb(),
+    dbdir = dbdir,
     bigint = "integer64"
   )
   DBI::dbExecute(conn, "
-      set threads = 4;
-      set preserve_insertion_order = 'false'
-    ")
+    SET threads = 4;
+    SET preserve_insertion_order = 'false'
+  ")
   if (site == "aus") {
     DBI::dbExecute(conn, "
-        set extension_directory = 'U:/extensions'
-      ")
+      SET extension_directory = 'U:/extensions'
+    ")
+  }
+  if (site == "ls3") {
+    DBI::dbExecute(
+      conn, "
+      SET custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/';
+      SET temp_directory = '/tmp/duckdb_swap';
+    ")
   }
   if (ext %in% c("core", "all")) {
     DBI::dbExecute(
@@ -41,18 +75,6 @@ set_conn <- function(ext = c("core", "all", "none"))
     ")
   }
   invisible(conn)
-}
-
-#' Supprime la connexion globale duckdb 'conn'
-#' @export
-unset_conn <- function()
-{
-  if (exists("conn", env=.GlobalEnv)
-      && inherits(.GlobalEnv$con, "duckdb_connection")
-      && DBI::dbIsValid(.GlobalEnv$con))
-  DBI::dbDisconnect(.GlobalEnv$con)
-  try(rm(list="conn", envir = .GlobalEnv))
-  invisible()
 }
 
 #' Installe les extensions duckdb
@@ -78,59 +100,6 @@ install_extensions <- function(conn, ext = c("core", "all", "none"))
   }
 }
 
-#' Renvoie une connexion duckdb
-#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
-#' @param new : si TRUE, force la création d'une nouvelle connexion, FALSE ar défaut
-#' @param simple : si TRUE, renvoit une connexion comme un simple dbConnect, FALSE par défaut
-#' @export
-get_conn <- function(dbdir = ":memory:", new = F, simple = F) {
-  # si connexion absente ou invalide ou changement de dbdir, nouvelle connexion
-  if (
-    (new || !exists("conn") || !DBI::dbIsValid(conn)) || basename(conn@driver@dbdir) != dbdir
-  ) {
-    conn = DBI::dbConnect(
-      duckdb::duckdb(),
-      dbdir = dbdir,
-      bigint = "integer64"
-    )
-    DBI::dbExecute(conn, "
-      set threads = 4;
-      set preserve_insertion_order = 'false'
-    ")
-  }
-  if (site == "aus") {
-    DBI::dbExecute(conn, "
-      set extension_directory = 'U:/extensions';
-    ")
-    refresh_secret(conn)
-  }
-  if (site %in% c("ssp", "pc")) {
-    DBI::dbExecute(
-      conn, "
-      INSTALL httpfs;
-      LOAD httpfs;
-      SET s3_url_style = 'path';
-      INSTALL spatial;
-      LOAD spatial;
-      CALL register_geoarrow_extensions();
-      INSTALL h3 from community;
-      LOAD h3;
-    ")
-  }
-  if (site == "ls3") {
-    DBI::dbExecute(
-      conn, "
-      set custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/';
-      LOAD httpfs;
-      SET s3_url_style = 'path';
-      LOAD spatial;
-      CALL register_geoarrow_extensions();
-      SET temp_directory = '/tmp/duckdb_swap';
-    ")
-    refresh_secret(conn)
-  }
-  conn
-}
 
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
 #' @param conn : connexion duckdb

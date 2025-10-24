@@ -6,6 +6,10 @@
 \usage{
 set_conn(ext = c("core", "all", "none"))
 }
+\arguments{
+\item{ext:}{indique les extensions chargées. 'core' = httpfs et spatial,
+'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'core' par défaut}
+}
 \description{
 Crée une connexion globale duckdb 'conn'
 }
