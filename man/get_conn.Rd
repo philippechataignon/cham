@@ -4,13 +4,13 @@
 \alias{get_conn}
 \title{Renvoie une connexion duckdb}
 \usage{
-get_conn(dbdir = ":memory:", ext = c("none", "core", "all"))
+get_conn(dbdir = ":memory:", ext = c("none", "core", "geo"))
 }
 \arguments{
 \item{dbdir}{: nom du la base duckdb, par défaut base stockée en mémoire}
 
-\item{ext:}{indique les extensions chargées. 'core' = httpfs et spatial,
-'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut}
+\item{ext:}{indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+'none' = pas d'extension. 'none' par défaut}
 }
 \description{
 Renvoie une connexion duckdb

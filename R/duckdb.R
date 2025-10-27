@@ -1,8 +1,8 @@
 #' Crée une connexion globale duckdb 'conn'
-#' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
-#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut
+#' @param ext: indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+#' 'none' = pas d'extension. 'none' par défaut
 #' @export
-set_conn <- function(ext = c("none", "core", "all"))
+set_conn <- function(ext = c("none", "core", "geo"))
 {
   ext = match.arg(ext)
   if (exists("conn", env=.GlobalEnv)) {
@@ -31,10 +31,10 @@ unset_conn <- function()
 
 #' Renvoie une connexion duckdb
 #' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
-#' @param ext: indique les extensions chargées. 'core' = httpfs et spatial,
-#' 'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut
+#' @param ext: indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+#' 'none' = pas d'extension. 'none' par défaut
 #' @export
-get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "all"))
+get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"))
 {
   ext = match.arg(ext)
   conn = DBI::dbConnect(
@@ -57,21 +57,20 @@ get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "all"))
       SET custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/';
       SET temp_directory = '/tmp/duckdb_swap';
     ")
+    refresh_secret(conn)
   }
-  if (ext %in% c("core", "all")) {
+  if (ext %in% c("core", "geo")) {
     DBI::dbExecute(
       conn, "
       LOAD httpfs;
       LOAD spatial;
       CALL register_geoarrow_extensions();
     ")
-    refresh_secret(conn)
   }
-  if (ext %in% c("all")) {
+  if (ext %in% c("geo")) {
     DBI::dbExecute(
       conn, "
       LOAD h3;
-      LOAD read_stat;
     ")
   }
   invisible(conn)

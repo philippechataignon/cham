@@ -4,11 +4,11 @@
 \alias{set_conn}
 \title{Crée une connexion globale duckdb 'conn'}
 \usage{
-set_conn(ext = c("none", "core", "all"))
+set_conn(ext = c("none", "core", "geo"))
 }
 \arguments{
-\item{ext:}{indique les extensions chargées. 'core' = httpfs et spatial,
-'all' = ajoute h3 et read_stat, 'none' = pas d'extension. 'none' par défaut}
+\item{ext:}{indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+'none' = pas d'extension. 'none' par défaut}
 }
 \description{
 Crée une connexion globale duckdb 'conn'
