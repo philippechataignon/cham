@@ -92,7 +92,7 @@ Fonction 'print' dédiée
 \if{html}{\out{<a id="method-duckdb_conn-is_connected"></a>}}
 \if{latex}{\out{\hypertarget{method-duckdb_conn-is_connected}{}}}
 \subsection{Method \code{is_connected()}}{
-Connexion active ?
+Connexion valide ?
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{duckdb_conn$is_connected()}\if{html}{\out{</div>}}
 }

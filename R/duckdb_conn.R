@@ -117,7 +117,3 @@ duckdb_conn <- R6Class(
     }
   )
 )
-
-#' Crée une instance de duckdb_conn
-#' @export
-db = duckdb_conn$new()
