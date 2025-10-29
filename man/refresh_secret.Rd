@@ -7,7 +7,7 @@
 refresh_secret(conn)
 }
 \arguments{
-\item{conn}{: connexion duckdb}
+\item{conn}{Connexion duckdb}
 }
 \value{
 Code retour duckdb

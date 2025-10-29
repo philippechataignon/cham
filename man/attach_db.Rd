@@ -4,17 +4,16 @@
 \alias{attach_db}
 \title{Attach une base duckdb à une connexion}
 \usage{
-attach_db(conn, path, db, crypt = FALSE)
+attach_db(conn, dbdir, db, crypt = FALSE)
 }
 \arguments{
-\item{conn:}{connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{Connexion duckdb, peut être obtenu par la fonction get_conn}
 
-\item{path:}{chemin de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
-(s3perso)/duckdb}
+\item{dbdir}{Chemin vers le fichier duckdb}
 
-\item{db:}{nom de l'alias de la base}
+\item{db}{Nom de l'alias de la base}
 
-\item{crypt:}{si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée}
+\item{crypt}{Si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée}
 }
 \value{
 Nom de la base duckdb

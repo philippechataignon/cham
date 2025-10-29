@@ -7,12 +7,12 @@
 tbl_db(conn, db, verbose = FALSE)
 }
 \arguments{
-\item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{Connexion duckdb, peut être obtenu par la fonction get_conn}
 
-\item{db:}{nom de la database}
+\item{db}{Nom de la database duckdb}
 }
 \value{
-Liste de tables dplyr
+Liste de tables
 }
 \description{
 Renvoie une liste de tables depuis une database duckdb

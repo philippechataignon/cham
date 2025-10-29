@@ -7,14 +7,14 @@
 tbl_duckdb(conn, name, db = NULL, crypt = FALSE)
 }
 \arguments{
-\item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{Connexion duckdb, peut être obtenu par la fonction get_conn}
 
-\item{name:}{nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
+\item{name}{Nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
 (s3perso)/duckdb}
 
-\item{db:}{nom de l'alias de la base, par défaut path}
+\item{db}{Nom de l'alias de la base, par défaut path}
 
-\item{crypt:}{si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée}
+\item{crypt}{Si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée}
 }
 \value{
 Liste de tables

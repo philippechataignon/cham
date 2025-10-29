@@ -1,41 +1,17 @@
-#' Crée une connexion globale duckdb 'conn'
-#' @param ext: indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
-#' 'none' = pas d'extension. 'none' par défaut
-#' @export
-set_conn <- function(ext = c("none", "core", "geo"))
-{
-  ext = match.arg(ext)
-  if (exists("conn", env=.GlobalEnv)) {
-    if (!inherits(.GlobalEnv$conn, "duckdb_connection")) {
-      stop("Existing 'conn' global object is not a duckdb connection")
-    }
-    if (DBI::dbIsValid(.GlobalEnv$conn)) {
-      return(invisible(.GlobalEnv$conn))
-    }
-  }
-  conn <<- get_conn(ext = ext)
-  invisible(conn)
-}
-
-#' Supprime la connexion globale duckdb 'conn'
-#' @export
-unset_conn <- function()
-{
-  if (exists("conn", env=.GlobalEnv)
-      && inherits(.GlobalEnv$con, "duckdb_connection")
-      && DBI::dbIsValid(.GlobalEnv$con))
-  DBI::dbDisconnect(.GlobalEnv$con)
-  try(rm(list="conn", envir = .GlobalEnv))
-  invisible()
-}
-
 #' Renvoie une connexion duckdb
-#' @param dbdir : nom du la base duckdb, par défaut base stockée en mémoire
-#' @param ext: indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+#' @param dbdir Chemin vers le fichier duckdb, par défaut base stockée en mémoire
+#' @param ext Indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
 #' 'none' = pas d'extension. 'none' par défaut
+#' @param new Obsolète, non pris en compte, présent pour raison de compatibilité
+#' avec d'anciens programmes
 #' @export
-get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"))
+get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"), new = NULL)
 {
+  if (!missing(new)) {
+    warning("La paramètre 'new' est renseigné mais n'est pas pris en compte. ",
+            "Il peut être supprimé : ",
+            "get_conn renvoit une nouvelle connexion à chaque appel")
+  }
   ext = match.arg(ext)
   conn = DBI::dbConnect(
     duckdb::duckdb(),
@@ -99,16 +75,14 @@ install_extensions <- function(conn, ext = c("core", "all", "none"))
   }
 }
 
-
 #' Renvoit une table duckdb depuis un fichier parquet y.c S3
-#' @param conn : connexion duckdb
-#' @param path : chemin de la table/répertoire parquet
-#' @param level : nombre de niveaux dans le cas de fichiers parquet partitionnés,
+#' @param conn Connexion duckdb
+#' @param path Chemin de la table/répertoire parquet
+#' @param level Nombre de niveaux dans le cas de fichiers parquet partitionnés,
 #' par défaut 0 si pas de partionnement
-#' @param lower : si TRUE, les variables sont converties en minuscules
+#' @param lower Si TRUE, les variables sont converties en minuscules
 #' @return Liste de tables duckdb
 #' @export
-
 tbl_pqt <- function(conn, path, level = 0, lower = FALSE, verbose = FALSE) {
   # si les paths se terminent par un /, alors on ajoute *.parquet
   if (
@@ -135,8 +109,9 @@ tbl_pqt <- function(conn, path, level = 0, lower = FALSE, verbose = FALSE) {
 
 #' Renvoit une liste de tables duckdb depuis une liste
 #' de chemins vers des fichiers/répertoires parquet
-#' @param conn : connexion duckdb
-#' @param liste : liste de chemins
+#' @param conn Connexion duckdb
+#' @param liste Liste de chemins vers les fichiers 'parquet'
+#' @return liste Liste de tables duckdb
 #' @export
 tbl_list <- function(conn, paths, level = 0, lower = FALSE, verbose = FALSE) {
   lapply(
@@ -174,7 +149,7 @@ s3perso
 s3expl
 
 #' Crée un secret à partir des variables env S3
-#' @param conn : connexion duckdb
+#' @param conn Connexion duckdb
 #' @return Code retour duckdb
 #' @export
 refresh_secret <- function(conn) {
@@ -204,16 +179,15 @@ refresh_secret <- function(conn) {
 }
 
 #' Attach une base duckdb à une connexion
-#' @param conn: connexion duckdb, peut être obtenu par la fonction get_conn
-#' @param path: chemin de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
-#'        (s3perso)/duckdb
-#' @param db: nom de l'alias de la base
-#' @param crypt: si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée
+#' @param conn Connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param dbdir Chemin vers le fichier duckdb
+#' @param db Nom de l'alias de la base
+#' @param crypt Si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée
 #' @return Nom de la base duckdb
 #' @export
-attach_db <- function(conn, path, db, crypt=FALSE) {
+attach_db <- function(conn, dbdir, db, crypt=FALSE) {
   DBI::dbExecute(conn, paste("DETACH DATABASE IF EXISTS", db))
-  cmd = paste0("ATTACH '", path, "' as ", db)
+  cmd = paste0("ATTACH '", dbdir, "' as ", db)
   if (crypt) {
     cmd = paste0(
       cmd,
@@ -227,9 +201,9 @@ attach_db <- function(conn, path, db, crypt=FALSE) {
 }
 
 #' Renvoie une liste de tables depuis une database duckdb
-#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
-#' @param db: nom de la database
-#' @return Liste de tables dplyr
+#' @param conn Connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param db Nom de la database duckdb
+#' @return Liste de tables
 #' @export
 tbl_db <- function(conn, db, verbose=FALSE) {
   tables = dbGetQuery(conn, paste("SHOW TABLES FROM", db))$name
@@ -240,11 +214,11 @@ tbl_db <- function(conn, db, verbose=FALSE) {
 }
 
 #' Renvoie une liste de tables depuis une base duckdb
-#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
-#' @param name: nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
+#' @param conn Connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param name Nom de la base duckdb, ".duckdb" est ajouté automatiquement et la base est dans le répertoire
 #'        (s3perso)/duckdb
-#' @param db: nom de l'alias de la base, par défaut path
-#' @param crypt: si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée
+#' @param db Nom de l'alias de la base, par défaut path
+#' @param crypt Si TRUE, passe la valeur de DUCKDB_ENCRYPTION_KEY comme clé de la base cryptée
 #' @return Liste de tables
 #' @export
 tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
@@ -254,7 +228,7 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
   if (grepl("crypt", name, fixed=T)) {
     crypt = TRUE
   }
-  db = attach_db(conn, path = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
+  db = attach_db(conn, dbdir = file.path(s3perso, "duckdb", paste0(name, ".duckdb")), db, crypt=crypt)
   tbl_db(conn, db)
 }
 

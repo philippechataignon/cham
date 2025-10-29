@@ -8,9 +8,12 @@ de chemins vers des fichiers/répertoires parquet}
 tbl_list(conn, paths, level = 0, lower = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{conn}{: connexion duckdb}
+\item{conn}{Connexion duckdb}
 
-\item{liste}{: liste de chemins}
+\item{liste}{Liste de chemins vers les fichiers 'parquet'}
+}
+\value{
+liste Liste de tables duckdb
 }
 \description{
 Renvoit une liste de tables duckdb depuis une liste
