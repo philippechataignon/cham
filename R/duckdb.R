@@ -147,7 +147,6 @@ tbl_list <- function(conn, paths, level = 0, lower = FALSE, verbose = FALSE) {
   )
 }
 
-site = get_site()
 if (site == "ls3") {
   s3perso <- paste0("s3://travail/user-", Sys.getenv("IDEP"))
 } else if (site == "ssp") {

@@ -15,7 +15,7 @@ s3createfs <- function() {
 #'       et read_csv_arrow
 #' @export
 s3file <- function(path, root, fs) {
-  if (get_site() %in% c("ssp", "ls3")) {
+  if (site %in% c("ssp", "ls3")) {
     if (missing(fs)) {
       fs = s3createfs()
     }
