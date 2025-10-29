@@ -41,30 +41,21 @@ duckdb_conn <- R6Class(
     #' Fonction 'print' dédiée
     #' @param ... Inutilisé
     print = function(...) {
-      message("Duckdb connection ", "ext:", private$pext, " dbdir:", private$pdbdir)
+      message("Connexion duckdb ", "ext:", private$pext, " dbdir:", private$pdbdir)
       if (self$is_connected())
         print(private$pconn)
       else
-        message("No connection")
+        message("Non connecté")
       invisible(self)
     },
     #' @description
-    #' Connexion active ?
+    #' Connexion valide ?
     #' @return TRUE/FALSE
     is_connected = function() {
-      ret <- FALSE
       if (is.null(private$pconn)) {
-        ret <- FALSE
-      } else if (DBI::dbIsValid(private$pconn)) {
-        tryCatch({
-          z <- private$pconn |>
-            DBI::dbListTables()
-          ret <- TRUE
-        }, error = function(e){
-          ret <<- FALSE
-        }, warning = function(e){
-          ret <<- FALSE
-        })
+        ret = F
+      } else {
+        ret = DBI::dbIsValid(private$pconn)
       }
       ret
     },
@@ -73,7 +64,7 @@ duckdb_conn <- R6Class(
     #' Attention: toutes les tables en mémoire sont perdues
     connect_new = function() {
       self$disconnect()
-      private$pconn <- get_conn(ext = private$pext, dbdir = private$pdbdir)
+      private$pconn = get_conn(ext = private$pext, dbdir = private$pdbdir)
       invisible(self)
     },
     #' @description
