@@ -10,7 +10,7 @@ s3createfs <- function() {
 }
 
 #' Renvoit un SubFileSystemTree
-#' @param path : chemin
+#' @param path chemin
 #' @note Peut être utilisé avec read_parquet, write_parquet
 #'       et read_csv_arrow
 #' @export
@@ -29,7 +29,7 @@ s3file <- function(path, root, fs) {
 }
 
 #' Teste si path existe
-#' @param path : chemin
+#' @param path chemin
 #' @export
 s3exists <- function(path, fs, ...) {
   if (missing(fs)) {
@@ -40,10 +40,10 @@ s3exists <- function(path, fs, ...) {
 }
 
 #' Télécharge un fichier dans s3 si absent
-#' @param url : url à télécharger
-#' @param path : chemin s3 à créer, si absent prend le dernier nom de l'url
-#' @param fs : filesystem, par défaut s3fs
-#' @param force : force le téléchargement même si fichier déjà présent
+#' @param url url à télécharger
+#' @param path chemin s3 à créer, si absent prend le dernier nom de l'url
+#' @param fs filesystem, par défaut s3fs
+#' @param force force le téléchargement même si fichier déjà présent
 #' @return Renvoit un SubTreeFileSystem utilisable avec `copy_files`
 #' @export
 s3download <- function(url, path, fs, force = FALSE) {

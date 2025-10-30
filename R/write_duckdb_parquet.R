@@ -18,12 +18,12 @@ write_duckdb_parquet_raw <- function(
 }
 
 #' Écrit fichier parquet depuis une table duckdb
-#' @param table : table duckdb
-#' @param path : nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table
-#' @param dir : répertoire de sortie, éventuellement s3
-#' @param order_by : ordre éventuel de sortie sous forme de vecteur character
-#' @param partition : chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut
-#' @param verbose : indique la requete SQL générée
+#' @param table table duckdb
+#' @param path nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table
+#' @param dir répertoire de sortie, éventuellement s3
+#' @param order_by ordre éventuel de sortie sous forme de vecteur character
+#' @param partition chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut
+#' @param verbose indique la requete SQL générée
 #' @return nom du fichier/répertoire
 #' @examples
 #' s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"

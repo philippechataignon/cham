@@ -7,13 +7,13 @@
 pg_attach(conn, param, db = "pg", schema = "public")
 }
 \arguments{
-\item{conn:}{connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{connexion duckdb, peut être obtenu par la fonction get_conn}
 
-\item{param:}{liste de paramètres créée par \code{\link[=db_param]{db_param()}}}
+\item{param}{liste de paramètres créée par \code{\link[=db_param]{db_param()}}}
 
-\item{db:}{nom de l'alias de la base}
+\item{db}{nom de l'alias de la base}
 
-\item{schema:}{nom du schema Postgres, 'public' par défaut}
+\item{schema}{nom du schema Postgres, 'public' par défaut}
 }
 \value{
 Code retour dbExecute

@@ -7,7 +7,7 @@
 s3file(path, root, fs)
 }
 \arguments{
-\item{path}{: chemin}
+\item{path}{chemin}
 }
 \description{
 Renvoit un SubFileSystemTree

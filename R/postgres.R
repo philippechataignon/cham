@@ -41,8 +41,8 @@ list_db = list(
 )
 
 #' Renvoie une liste contenant les paramètres de connexion Postgres
-#' @param source: nom de la source RP, par exemple "omer" ou "ear"
-#' @param an: facultatif sauf pour certaines sources RP
+#' @param source nom de la source RP, par exemple "omer" ou "ear"
+#' @param an facultatif sauf pour certaines sources RP
 #' @return Liste de 4 éléments nommés 'dbname', 'host', 'user' et 'port'
 #' @export
 db_param <- function(source, an=NULL)
@@ -67,7 +67,7 @@ db_param <- function(source, an=NULL)
 }
 
 #' Renvoie une connexion Postgres à partir dune liste créée par [db_param()]
-#' @param param: liste de paramètres créée par [db_param()]
+#' @param param liste de paramètres créée par [db_param()]
 #' @return Connexion Postgres
 #' @examples
 #' conn_pg <- pg_connect(db_param("rorcal_clone"))
@@ -86,10 +86,10 @@ pg_connect <- function(param)
 }
 
 #' Attache une base Postgres à duckdb à partir dune liste créée par [db_param()]
-#' @param conn: connexion duckdb, peut être obtenu par la fonction get_conn
-#' @param param: liste de paramètres créée par [db_param()]
-#' @param db: nom de l'alias de la base
-#' @param schema: nom du schema Postgres, 'public' par défaut
+#' @param conn connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param param liste de paramètres créée par [db_param()]
+#' @param db nom de l'alias de la base
+#' @param schema nom du schema Postgres, 'public' par défaut
 #' @return Code retour dbExecute
 #' @examples
 #' conn = DBI::dbConnect(duckdb::duckdb())

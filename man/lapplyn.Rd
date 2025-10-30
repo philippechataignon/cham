@@ -7,9 +7,9 @@
 lapplyn(l, f)
 }
 \arguments{
-\item{l}{: liste character}
+\item{l}{liste character}
 
-\item{f}{: fonction appliquée à chaque élément de la liste}
+\item{f}{fonction appliquée à chaque élément de la liste}
 }
 \value{
 Liste d'éléments nommés avec le résultat de la fonction

@@ -9,7 +9,7 @@ get_conn(dbdir = ":memory:", ext = c("none", "core", "geo"), new = NULL)
 \arguments{
 \item{dbdir}{Chemin vers le fichier duckdb, par défaut base stockée en mémoire}
 
-\item{ext}{Indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+\item{ext}{Indique les extensions chargées. 'core': spatial, 'geo' h3 et spatial,
 'none' = pas d'extension. 'none' par défaut}
 
 \item{new}{Obsolète, non pris en compte, présent pour raison de compatibilité

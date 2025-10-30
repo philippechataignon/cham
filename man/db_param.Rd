@@ -7,9 +7,9 @@
 db_param(source, an = NULL)
 }
 \arguments{
-\item{source:}{nom de la source RP, par exemple "omer" ou "ear"}
+\item{source}{nom de la source RP, par exemple "omer" ou "ear"}
 
-\item{an:}{facultatif sauf pour certaines sources RP}
+\item{an}{facultatif sauf pour certaines sources RP}
 }
 \value{
 Liste de 4 éléments nommés 'dbname', 'host', 'user' et 'port'

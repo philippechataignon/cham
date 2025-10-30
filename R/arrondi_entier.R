@@ -1,9 +1,9 @@
 #' Arrondit un vecteur numérique sur une cible entière
-#' @param x: vecteur à traiter contenant uniquement des valeurs positives
-#' @param p: (optionnel) vecteur de poids, sinon poids = 1
-#' @param target: (optionnel) entier cible pour la somme pondérée de x,
+#' @param x vecteur à traiter contenant uniquement des valeurs positives
+#' @param p (optionnel) vecteur de poids, sinon poids = 1
+#' @param target (optionnel) entier cible pour la somme pondérée de x,
 #' par défaut somme pondérée de x
-#' @param na.rm: (optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut
+#' @param na.rm (optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut
 #' @export
 
 arrondi_entier <- function(

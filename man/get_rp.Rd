@@ -7,7 +7,7 @@
 get_rp(conn, an, src = c("gen", "edl", "misc"), verbose = FALSE)
 }
 \arguments{
-\item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{connexion duckdb, peut être obtenu par la fonction get_conn}
 }
 \value{
 Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'

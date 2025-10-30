@@ -7,11 +7,11 @@
 write_s3_st(st_table, name, s3path = "gpkg")
 }
 \arguments{
-\item{st_table}{: table de class st}
+\item{st_table}{table de class st}
 
-\item{name}{: nom du fichier à écrire en format gpkg}
+\item{name}{nom du fichier à écrire en format gpkg}
 
-\item{s3path}{: chemin du stockage s3, par défaut \code{gpkg}}
+\item{s3path}{chemin du stockage s3, par défaut \code{gpkg}}
 }
 \description{
 Écrit une table de classe sf vers stockage s3

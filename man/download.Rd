@@ -4,18 +4,18 @@
 \alias{download}
 \title{Télécharge un fichier si absent}
 \usage{
-download(url, destfile, dir = NULL, force = FALSE, verbose = FALSE)
+download(url, file, dir = NULL, force = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{url:}{URL du fichier}
+\item{url}{URL du fichier}
 
-\item{file:}{chemin du fichier destination, par défaut extrait de l'url}
+\item{file}{Chemin du fichier destination, par défaut extrait de l'url}
 
-\item{dir:}{chemin du fichier destination, par défaut la variable
-d'environnement DOWNLOAD_DIR si elle existe, sinon répertoire temporaire}
+\item{dir}{Chemin du fichier destination, par défaut répertoire courant}
 
-\item{force:}{TRUE pour forcer le téléchargement même si le fichier existe,
-FALSE par défaut}
+\item{force}{TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut}
+
+\item{verbose}{TRUE pour afficher davantage d'information, FALSE par défaut}
 }
 \description{
 Télécharge un fichier si absent

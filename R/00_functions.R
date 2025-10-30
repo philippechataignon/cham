@@ -1,9 +1,9 @@
 #' Calcul taux évolution
-#' @param eff1: effectif initial
-#' @param eff2: effectif final
-#' @param nb_per: nombre de périodes
-#' @param pct: évolution en %, FALSE par défaut
-#' @param dec: nombre de décimales, par défaut toutes
+#' @param eff1 effectif initial
+#' @param eff2 effectif final
+#' @param nb_per nombre de périodes
+#' @param pct évolution en %, FALSE par défaut
+#' @param dec nombre de décimales, par défaut toutes
 #' @export
 txevol <- function(eff1, eff2, nb_per, pct = F, dec = NA) {
   ret = case_when(
@@ -24,11 +24,11 @@ txevol <- function(eff1, eff2, nb_per, pct = F, dec = NA) {
 }
 
 #' Calcul taux évolution d'un solde
-#' @param eff1: effectif initial
-#' @param eff2: effectif final
-#' @param solde: représente une composante de eff2 - eff1
-#' @param pct: évolution en %, FALSE par défaut
-#' @param dec: nombre de décimales, par défaut toutes
+#' @param eff1 effectif initial
+#' @param eff2 effectif final
+#' @param solde représente une composante de eff2 - eff1
+#' @param pct évolution en %, FALSE par défaut
+#' @param dec nombre de décimales, par défaut toutes
 #' @export
 txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
   ret = case_when(
@@ -47,21 +47,20 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
   ret
 }
 
-
 #' Télécharge un fichier si absent
-#' @param url: URL du fichier
-#' @param file: chemin du fichier destination, par défaut extrait de l'url
-#' @param dir: chemin du fichier destination, par défaut la variable
-#'   d'environnement DOWNLOAD_DIR si elle existe, sinon répertoire temporaire
-#' @param force: TRUE pour forcer le téléchargement même si le fichier existe,
-#'   FALSE par défaut
+#' @param url URL du fichier
+#' @param file Chemin du fichier destination, par défaut extrait de l'url
+#' @param dir Chemin du fichier destination, par défaut répertoire courant
+#' @param force TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut
+#' @param verbose TRUE pour afficher davantage d'information, FALSE par défaut
 #' @export
-download <- function(url, destfile, dir = NULL, force = FALSE, verbose = FALSE) {
-  if (missing(destfile)) {
-    destfile = basename(url)
+download <- function(url, file, dir = NULL, force = FALSE, verbose = FALSE)
+{
+  if (missing(file)) {
+    file = basename(url)
   }
   if (is.null(dir)) {
-    path = destfile
+    path = file
   } else {
     path = file.path(dir, destfile)
   }
@@ -76,10 +75,12 @@ download <- function(url, destfile, dir = NULL, force = FALSE, verbose = FALSE) 
   path
 }
 
-
 #' Télécharge et décompresse une fichier compressé
-#' @param url: URL du fichier
-#' @param keep: TRUE pour conserver le fichier téléchargé et l'extraction
+#' @param url URL du fichier
+#' @param file chemin du fichier destination, par défaut extrait de l'url
+#' @param dir chemin du fichier destination, par défaut répertoire courant
+#' @param force TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut
+#' @param verbose TRUE pour afficher davantage d'information, FALSE par défaut
 #' @export
 download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 {
@@ -104,9 +105,10 @@ download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbo
 }
 
 #' Récupère URL du fichier données melodi depuis un id source
-#' @param id: id du jeu de données, exemple DS_POPULATIONS_REFERENCE
+#' @param id id du jeu de données, exemple DS_POPULATIONS_REFERENCE
 #' @export
-get_access_url <- function(id) {
+get_access_url <- function(id)
+{
   url = paste0("https://api.insee.fr/melodi/catalog/", id)
   rep = httr::GET(url, httr::accept_json()) |>
     httr::content()
@@ -150,8 +152,8 @@ get_site <- function() {
 site = get_site()
 
 #' Fonction lapply avec utilisation des noms de la liste nommée
-#' @param l : liste character
-#' @param f : fonction appliquée à chaque élément de la liste
+#' @param l liste character
+#' @param f fonction appliquée à chaque élément de la liste
 #' @return Liste d'éléments nommés avec le résultat de la fonction
 #' @export
 lapplyn <- function(l, f) {
@@ -161,8 +163,8 @@ lapplyn <- function(l, f) {
 }
 
 #' Renvoie une liste nommée à partir d'un pattern
-#' @param l : vecteur character
-#' @param pattern : pattern glue où "{x}" est remplacé par les valeurs de l
+#' @param l vecteur character
+#' @param pattern pattern glue où "{x}" est remplacé par les valeurs de l
 #' @return Liste d'éléments nommés avec le pattern résolu pour chauqe valeur
 #' @examples
 #' extend(c("a", "b", "c"), "test{x}")
@@ -178,10 +180,10 @@ extend <- function(l, pattern) {
 }
 
 #' Renvoie TRUE si écart dans la norme
-#' @param v1 : valeur initiale
-#' @param v2 : valeur finale
-#' @param abs : écart absolu maximal, 0 par défaut
-#' @param rel : écart relatif maximal, 0 par défaut
+#' @param v1 valeur initiale
+#' @param v2 valeur finale
+#' @param abs écart absolu maximal, 0 par défaut
+#' @param rel écart relatif maximal, 0 par défaut
 #' @return Renvoie TRUE si écart dans la norme, FALSE sinon
 #' @examples
 #' # OK si ecart < 5% ou <= 10
@@ -193,7 +195,7 @@ ecart <- function(v1, v2, abs = 0, rel = 0) {
 }
 
 #' Compte le nombre de bits par éléement d'un vecteur entier
-#' @param n : Vecteur d'entiers
+#' @param n Vecteur d'entiers
 #' @return Nombre de '1' dans l'expression binaire
 #' @examples count_bits(1:16)
 #' @export
@@ -209,7 +211,7 @@ count_bits <- function(n)
 
 
 #' Crée une valeur de 'grouping' par facililter l'utilsation des fonctions 'cube'
-#' @param x: Vecteur de booleans avec TRUE pour les dimensions présentes
+#' @param x Vecteur de booleans avec TRUE pour les dimensions présentes
 #' @return Valeur de groupe correspondant
 #' @examples
 #' # Croisement région x statut occupation

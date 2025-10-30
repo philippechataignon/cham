@@ -7,9 +7,9 @@
 extend(l, pattern)
 }
 \arguments{
-\item{l}{: vecteur character}
+\item{l}{vecteur character}
 
-\item{pattern}{: pattern glue où "{x}" est remplacé par les valeurs de l}
+\item{pattern}{pattern glue où "{x}" est remplacé par les valeurs de l}
 }
 \value{
 Liste d'éléments nommés avec le pattern résolu pour chauqe valeur

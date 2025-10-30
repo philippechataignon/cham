@@ -7,7 +7,7 @@
 get_ear(conn, an, src = "gen")
 }
 \arguments{
-\item{conn}{: connexion duckdb, peut être obtenu par la fonction get_conn}
+\item{conn}{connexion duckdb, peut être obtenu par la fonction get_conn}
 }
 \value{
 Liste de 4 éléments nommés 'ind', 'log', 'fam' et 'liens'

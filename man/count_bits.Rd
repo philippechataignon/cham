@@ -7,7 +7,7 @@
 count_bits(n)
 }
 \arguments{
-\item{n}{: Vecteur d'entiers}
+\item{n}{Vecteur d'entiers}
 }
 \value{
 Nombre de '1' dans l'expression binaire

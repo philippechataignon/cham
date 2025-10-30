@@ -7,7 +7,7 @@
 s3exists(path, fs, ...)
 }
 \arguments{
-\item{path}{: chemin}
+\item{path}{chemin}
 }
 \description{
 Teste si path existe

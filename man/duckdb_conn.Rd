@@ -60,7 +60,7 @@ Crée un objet 'duckdb_conn'
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{ext}}{Extensions chargées 'core': httpfs+spatial, 'geo': core+h3
+\item{\code{ext}}{Extensions chargées 'core': httpfs+spatial, 'geo' core+h3
 'none' = pas d'extension. 'none' par défaut}
 
 \item{\code{dbdir}}{Nom du la base duckdb, par défaut base stockée en mémoire}

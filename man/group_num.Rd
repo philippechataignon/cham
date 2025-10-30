@@ -7,7 +7,7 @@
 group_num(x)
 }
 \arguments{
-\item{x:}{Vecteur de booleans avec TRUE pour les dimensions présentes}
+\item{x}{Vecteur de booleans avec TRUE pour les dimensions présentes}
 }
 \value{
 Valeur de groupe correspondant

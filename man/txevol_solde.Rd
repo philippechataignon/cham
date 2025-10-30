@@ -7,15 +7,15 @@
 txevol_solde(eff1, eff2, solde, nb_per, pct = F, dec = NA)
 }
 \arguments{
-\item{eff1:}{effectif initial}
+\item{eff1}{effectif initial}
 
-\item{eff2:}{effectif final}
+\item{eff2}{effectif final}
 
-\item{solde:}{représente une composante de eff2 - eff1}
+\item{solde}{représente une composante de eff2 - eff1}
 
-\item{pct:}{évolution en \%, FALSE par défaut}
+\item{pct}{évolution en \%, FALSE par défaut}
 
-\item{dec:}{nombre de décimales, par défaut toutes}
+\item{dec}{nombre de décimales, par défaut toutes}
 }
 \description{
 Calcul taux évolution d'un solde

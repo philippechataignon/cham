@@ -7,7 +7,7 @@
 pg_connect(param)
 }
 \arguments{
-\item{param:}{liste de paramètres créée par \code{\link[=db_param]{db_param()}}}
+\item{param}{liste de paramètres créée par \code{\link[=db_param]{db_param()}}}
 }
 \value{
 Connexion Postgres

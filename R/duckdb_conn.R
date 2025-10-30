@@ -26,7 +26,7 @@ duckdb_conn <- R6Class(
   public = list(
     #' @description
     #' Crée un objet 'duckdb_conn'
-    #' @param ext Extensions chargées 'core': httpfs+spatial, 'geo': core+h3
+    #' @param ext Extensions chargées 'core': httpfs+spatial, 'geo' core+h3
     #' 'none' = pas d'extension. 'none' par défaut
     #' @param dbdir Nom du la base duckdb, par défaut base stockée en mémoire
     #' @return Un objet 'duckdb_conn'

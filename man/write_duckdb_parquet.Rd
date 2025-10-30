@@ -14,17 +14,17 @@ write_duckdb_parquet(
 )
 }
 \arguments{
-\item{table}{: table duckdb}
+\item{table}{table duckdb}
 
-\item{path}{: nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table}
+\item{path}{nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table}
 
-\item{dir}{: répertoire de sortie, éventuellement s3}
+\item{dir}{répertoire de sortie, éventuellement s3}
 
-\item{partition}{: chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
+\item{partition}{chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
 
-\item{order_by}{: ordre éventuel de sortie sous forme de vecteur character}
+\item{order_by}{ordre éventuel de sortie sous forme de vecteur character}
 
-\item{verbose}{: indique la requete SQL générée}
+\item{verbose}{indique la requete SQL générée}
 }
 \value{
 nom du fichier/répertoire

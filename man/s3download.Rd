@@ -7,13 +7,13 @@
 s3download(url, path, fs, force = FALSE)
 }
 \arguments{
-\item{url}{: url à télécharger}
+\item{url}{url à télécharger}
 
-\item{path}{: chemin s3 à créer, si absent prend le dernier nom de l'url}
+\item{path}{chemin s3 à créer, si absent prend le dernier nom de l'url}
 
-\item{fs}{: filesystem, par défaut s3fs}
+\item{fs}{filesystem, par défaut s3fs}
 
-\item{force}{: force le téléchargement même si fichier déjà présent}
+\item{force}{force le téléchargement même si fichier déjà présent}
 }
 \value{
 Renvoit un SubTreeFileSystem utilisable avec \code{copy_files}

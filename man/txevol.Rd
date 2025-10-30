@@ -7,15 +7,15 @@
 txevol(eff1, eff2, nb_per, pct = F, dec = NA)
 }
 \arguments{
-\item{eff1:}{effectif initial}
+\item{eff1}{effectif initial}
 
-\item{eff2:}{effectif final}
+\item{eff2}{effectif final}
 
-\item{nb_per:}{nombre de périodes}
+\item{nb_per}{nombre de périodes}
 
-\item{pct:}{évolution en \%, FALSE par défaut}
+\item{pct}{évolution en \%, FALSE par défaut}
 
-\item{dec:}{nombre de décimales, par défaut toutes}
+\item{dec}{nombre de décimales, par défaut toutes}
 }
 \description{
 Calcul taux évolution

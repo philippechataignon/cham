@@ -7,7 +7,7 @@
 get_access_url(id)
 }
 \arguments{
-\item{id:}{id du jeu de données, exemple DS_POPULATIONS_REFERENCE}
+\item{id}{id du jeu de données, exemple DS_POPULATIONS_REFERENCE}
 }
 \description{
 Récupère URL du fichier données melodi depuis un id source

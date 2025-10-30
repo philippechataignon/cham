@@ -35,7 +35,7 @@ rp_gen_files[["2021"]]$pind <- c(
   )
 
 #' Renvoie une liste des tables du RP21
-#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param conn connexion duckdb, peut être obtenu par la fonction get_conn
 #' @return Liste de 5 éléments nommés 'pind', 'plog', 'cind', 'clog', 'cfam'
 #' selon principal (p)/complémentaire(c) et individu(ind)/logement(log)/famille(fam)
 #' @examples
@@ -94,7 +94,7 @@ get_rp <- function(conn, an, src = c("gen", "edl", "misc"), verbose = FALSE) {
 }
 
 #' Renvoit tables EAR depuis GEN
-#' @param conn : connexion duckdb, peut être obtenu par la fonction get_conn
+#' @param conn connexion duckdb, peut être obtenu par la fonction get_conn
 #' @return Liste de 4 éléments nommés 'ind', 'log', 'fam' et 'liens'
 #' @export
 get_ear <- function(conn, an, src = "gen")

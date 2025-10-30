@@ -7,13 +7,13 @@
 ecart(v1, v2, abs = 0, rel = 0)
 }
 \arguments{
-\item{v1}{: valeur initiale}
+\item{v1}{valeur initiale}
 
-\item{v2}{: valeur finale}
+\item{v2}{valeur finale}
 
-\item{abs}{: écart absolu maximal, 0 par défaut}
+\item{abs}{écart absolu maximal, 0 par défaut}
 
-\item{rel}{: écart relatif maximal, 0 par défaut}
+\item{rel}{écart relatif maximal, 0 par défaut}
 }
 \value{
 Renvoie TRUE si écart dans la norme, FALSE sinon

@@ -1,6 +1,6 @@
 #' Renvoie une connexion duckdb
 #' @param dbdir Chemin vers le fichier duckdb, par défaut base stockée en mémoire
-#' @param ext Indique les extensions chargées. 'core': spatial, 'geo': h3 et spatial,
+#' @param ext Indique les extensions chargées. 'core': spatial, 'geo' h3 et spatial,
 #' 'none' = pas d'extension. 'none' par défaut
 #' @param new Obsolète, non pris en compte, présent pour raison de compatibilité
 #' avec d'anciens programmes

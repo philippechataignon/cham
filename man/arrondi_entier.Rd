@@ -13,14 +13,14 @@ arrondi_entier(
 )
 }
 \arguments{
-\item{x:}{vecteur à traiter contenant uniquement des valeurs positives}
+\item{x}{vecteur à traiter contenant uniquement des valeurs positives}
 
-\item{p:}{(optionnel) vecteur de poids, sinon poids = 1}
+\item{p}{(optionnel) vecteur de poids, sinon poids = 1}
 
-\item{target:}{(optionnel) entier cible pour la somme pondérée de x,
+\item{target}{(optionnel) entier cible pour la somme pondérée de x,
 par défaut somme pondérée de x}
 
-\item{na.rm:}{(optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut}
+\item{na.rm}{(optionnel) supprime les valeurs manquantes si TRUE, FALSE par défaut}
 }
 \description{
 Arrondit un vecteur numérique sur une cible entière

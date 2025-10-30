@@ -7,9 +7,9 @@
 read_s3_st(name, s3path = "gpkg", tmp_dir = tempdir())
 }
 \arguments{
-\item{name}{: nom du fichier à lire}
+\item{name}{nom du fichier à lire}
 
-\item{s3path}{: chemin du stockage s3, par défaut \code{gpkg}}
+\item{s3path}{chemin du stockage s3, par défaut \code{gpkg}}
 }
 \description{
 Lit une table de classe sf depuis stockage s3
