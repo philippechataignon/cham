@@ -34,7 +34,6 @@ read_geoparquet <- function(
   if (transform && is.null(crs))
     stop("La paramètre 'crs' est obligatoire avec 'transform'")
   require(geoarrow)
-  set_conn()
   meta = get_geometadata(path, verbose=verbose)
   geom = meta$primary_column
   crs_src = paste(
@@ -50,6 +49,7 @@ read_geoparquet <- function(
     crs_dest = paste0("EPSG:", crs)
   else
     crs_dest = crs
+  conn = get_conn()
   if (transform) {
     geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
     q = paste0(
@@ -63,6 +63,7 @@ read_geoparquet <- function(
     ret = tbl_pqt(conn, path)
   }
   ret = tbl2sf(ret, crs=crs_dest, as.tibble=as.tibble)
+  DBI::dbDisconnect(conn)
   ret
 }
 
@@ -120,8 +121,7 @@ get_h3map <- function(hex_id)
 #' @export
 get_geometadata <- function(path, valid=T, verbose=T)
 {
-  set_conn()
-  # meta = arrow::open_dataset(path)$metadata
+  conn = get_conn()
   meta = DBI::dbGetQuery(conn, paste0("
     select decode(value) as value
     from parquet_kv_metadata('",
@@ -156,5 +156,6 @@ get_geometadata <- function(path, valid=T, verbose=T)
       }
     }
   }
+  DBI::dbDisconnect(conn)
   meta
 }
