@@ -7,6 +7,8 @@ geo <- function(path)
     ret = file.path(s3expl, "geoparquet", path)
   } else if (site %in% c("ssp")) {
     ret = file.path(s3perso, "geoparquet", path)
+  } else if (site %in% c("aus")) {
+    ret = file.path("X:","HAB-MaD-SeRN", "geoparquet", path)
   } else {
     dir = file.path(Sys.getenv("HOME"), "work", "geoparquet")
     dir.create(dir, recursive = T)
