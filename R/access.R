@@ -11,7 +11,7 @@ geo <- function(path)
     ret = file.path("X:","HAB-MaD-SeRN", "geoparquet", path)
   } else {
     dir = file.path(Sys.getenv("HOME"), "work", "geoparquet")
-    dir.create(dir, recursive = T)
+    dir.create(dir, recursive = T, showWarnings = F)
     ret = file.path(dir, path)
   }
   ret
