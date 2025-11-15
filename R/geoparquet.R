@@ -51,6 +51,8 @@ read_geoparquet <- function(
     crs_dest = crs
   conn = get_conn()
   if (transform) {
+    DBI::dbDisconnect(conn)
+    conn = get_conn(ext="geo")
     geom = paste0("st_transform(", geom, ", '", crs_src, "', '", crs_dest, "',  always_xy := ", xy, ")")
     q = paste0(
       "SELECT * REPLACE (", geom, " as geometry)
