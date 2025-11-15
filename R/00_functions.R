@@ -54,9 +54,12 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
 #' @param force TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut
 #' @param verbose TRUE pour afficher davantage d'information, FALSE par défaut
 #' @export
-download <- function(url, file, dir = tempdir(), force = FALSE, verbose = FALSE)
+download <- function(url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 {
-  if (missing(file)) {
+  if (is.null(dir)) {
+    dir = tempdir()
+  }
+  if (is.null(file)) {
     file = basename(url)
   }
   path = file.path(dir, file)
