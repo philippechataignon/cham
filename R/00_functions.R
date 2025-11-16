@@ -93,13 +93,14 @@ download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbo
     arrange(size)
   if (verbose)
     print(file_list)
-  if (is.null(file))
-    extract_file = dplyr::pull(tail(file_list,  1), path)
-  else
-    extract_file = file
+    if (is.null(file)) {
+      extract_file = dplyr::pull(tail(file_list,  1), path)
+    } else if (file == '*') {
+      extract_file = NULL
+    } else {
+      extract_file = file
+    }
   outfile = archive::archive_extract(archfile, dir=dirout, file=extract_file)
-  if (verbose)
-    cat(archfile, "downloaded, extract", outfile, "in", dirout, "\n")
   file.path(dirout, outfile)
 }
 
