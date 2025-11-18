@@ -9,13 +9,16 @@ download_archive(url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 \arguments{
 \item{url}{URL du fichier}
 
-\item{file}{chemin du fichier destination, par défaut extrait de l'url}
+\item{file}{chemin du fichier destination, par défaut le fichier le plus voluminueux. Si
+file = '*', tous les fichiers de l'archive sont extraits}
 
-\item{dir}{chemin du fichier destination, par défaut répertoire courant}
+\item{dir}{chemin du répertoire de destination, par défaut répertoire courant}
 
 \item{force}{TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut}
 
 \item{verbose}{TRUE pour afficher davantage d'information, FALSE par défaut}
+
+\item{...}{paramètres passés à download.file, par exemple method='wget'}
 }
 \description{
 Télécharge et décompresse une fichier compressé

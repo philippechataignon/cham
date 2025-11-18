@@ -16,6 +16,8 @@ download(url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 \item{force}{TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut}
 
 \item{verbose}{TRUE pour afficher davantage d'information, FALSE par défaut}
+
+\item{...}{paramètres passés à download.file, par exemple method='wget'}
 }
 \description{
 Télécharge un fichier si absent

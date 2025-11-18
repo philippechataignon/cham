@@ -53,6 +53,7 @@ txevol_solde <- function(eff1, eff2, solde, nb_per, pct = F, dec = NA) {
 #' @param dir Chemin du fichier destination, par défaut répertoire courant
 #' @param force TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut
 #' @param verbose TRUE pour afficher davantage d'information, FALSE par défaut
+#' @param ... paramètres passés à download.file, par exemple method='wget'
 #' @export
 download <- function(url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 {
@@ -76,10 +77,12 @@ download <- function(url, file = NULL, dir = NULL, force = FALSE, verbose = FALS
 
 #' Télécharge et décompresse une fichier compressé
 #' @param url URL du fichier
-#' @param file chemin du fichier destination, par défaut extrait de l'url
-#' @param dir chemin du fichier destination, par défaut répertoire courant
+#' @param file chemin du fichier destination, par défaut le fichier le plus voluminueux. Si
+#' file = '*', tous les fichiers de l'archive sont extraits
+#' @param dir chemin du répertoire de destination, par défaut répertoire courant
 #' @param force TRUE pour forcer le téléchargement même si le fichier existe, FALSE par défaut
 #' @param verbose TRUE pour afficher davantage d'information, FALSE par défaut
+#' @param ... paramètres passés à download.file, par exemple method='wget'
 #' @export
 download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbose = FALSE)
 {
@@ -89,17 +92,17 @@ download_archive <- function (url, file = NULL, dir = NULL, force = FALSE, verbo
     dirout = dir
   }
   archfile = download(url, dir = dir, force = force)
-  file_list = archive::archive(archfile) |>
-    arrange(size)
+  file_list = archive::archive(archfile)
+  file_list = file_list[order(file_list$size),]
   if (verbose)
     print(file_list)
-    if (is.null(file)) {
-      extract_file = dplyr::pull(tail(file_list,  1), path)
-    } else if (file == '*') {
-      extract_file = NULL
-    } else {
-      extract_file = file
-    }
+  if (is.null(file)) {
+    extract_file = dplyr::pull(tail(file_list,  1), path)
+  } else if (file == '*') {
+    extract_file = NULL
+  } else {
+    extract_file = file
+  }
   outfile = archive::archive_extract(archfile, dir=dirout, file=extract_file)
   file.path(dirout, outfile)
 }
