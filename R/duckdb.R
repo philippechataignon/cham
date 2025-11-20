@@ -242,7 +242,7 @@ tbl_duckdb <- function(conn, name, db=NULL, crypt=FALSE) {
 #'    )
 #'  )
 #' @export
-as.int =  quote(try_cast(sql(paste(cur_column(), "as integer"))))
+as.int =  quote(try_cast(dbplyr::sql(paste(cur_column(), "as integer"))))
 
 #' Wrapper try_cast duckdb
 #' @export
@@ -254,7 +254,7 @@ as.int =  quote(try_cast(sql(paste(cur_column(), "as integer"))))
 #'      ~ !!as.bool
 #'    )
 #'  )
-as.bool =  quote(try_cast(sql(paste(cur_column(), "as boolean"))))
+as.bool =  quote(try_cast(dbplyr::sql(paste(cur_column(), "as boolean"))))
 
 #' Wrapper try_cast duckdb
 #' @examples
@@ -268,7 +268,7 @@ as.bool =  quote(try_cast(sql(paste(cur_column(), "as boolean"))))
 as_int <- function(x) {
   nom = deparse(substitute(x))
   inner = paste(nom, "as integer")
-  substitute(try_cast(sql(inner)))
+  substitute(try_cast(dbplyr::sql(inner)))
 }
 
 #' Wrapper try_cast duckdb
@@ -283,5 +283,42 @@ as_int <- function(x) {
 as_bool <- function(x) {
   nom = deparse(substitute(x))
   inner = paste(nom, "as boolean")
-  substitute(try_cast(sql(inner)))
+  substitute(try_cast(dbplyr::sql(inner)))
 }
+
+
+
+#' Génère une requête SQL pour générer un cube duckdb
+#' @param table Table duckdb/dbplyr
+#' @param dims  Vecteur caractère des dimensions
+#' @param aggr  Description des calculs des mesures du cube
+#' dans une chaîne caractère
+#' @examples
+#' table |>
+#'  compute() |>
+#'  create_cube(
+#'    dims = c("us", "an", "dep", "sexe", "ager"),
+#'    aggr =
+#'    "round(sum(n))::integer as eff,
+#'     round(sum(n * is_internet::int))::integer as eff_inter"
+#'  ) |>
+#'  mutate(
+#'    tx_internet = round(eff_inter / eff * 100, 2)
+#'  ) -> tbl_cube
+#' @export
+create_cube <- function(table, dims, aggr) {
+  chr_dims = paste(dims, collapse="," )
+  tbl(
+    table$src$con,
+    dbplyr::sql(glue::glue("
+    select
+      grouping_id({chr_dims}) as grouping,
+      {chr_dims},
+      {aggr}
+    from {table$lazy_query$x}
+    group by cube ({chr_dims})
+    order by grouping, ({chr_dims})
+    "))
+  )
+}
+

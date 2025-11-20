@@ -1,7 +1,7 @@
 Package: cham
 Type: Package fonctions utiles INSEE
 Title: Fonctions utiles
-Version: 1.7.6
+Version: 1.8.0
 Author: Philippe Chataignon
 Maintainer: Philippe Chataignon <philippe.chataignon@insee.fr>
 Description: Fonctions utiles 
@@ -14,6 +14,7 @@ Suggests:
 Imports: 
   data.table,
   dplyr,
+  dbplyr,
   DBI,
   duckdb,
   glue,
