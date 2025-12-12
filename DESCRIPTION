@@ -3,7 +3,7 @@ Type: Package fonctions utiles INSEE
 Title: Fonctions utiles
 Version: 1.8.1
 Author: Philippe Chataignon
-Maintainer: Philippe Chataignon <philippe.chataignon@insee.fr>
+Maintainer: Philippe Chataignon <philippe.chataignon@gmail.com>
 Description: Fonctions utiles 
 License: GPL-2
 Encoding: UTF-8
