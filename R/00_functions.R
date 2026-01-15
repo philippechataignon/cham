@@ -234,3 +234,20 @@ group_num <- function(x)
   }
   2 ** length(x) - ret - 1
 }
+
+#' Renvoit un nom temporaire
+#' @param n Longueur du nom, par défaut 8
+#' @param prefix Préfixe éventuel, par défaut 'temp'
+#' @return Chaîne aléatoire de longueur n préfixée par prefix
+#' @examples
+#' tempname(4, "cube")
+#' [1] "cube_poiu"
+#' @export
+tempname <- function(n = 8, prefix = "temp")
+{
+  paste(
+    prefix,
+    paste0(sample(letters, n), collapse = ""),
+    sep = "_"
+  )
+}

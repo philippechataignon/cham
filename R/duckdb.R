@@ -307,6 +307,8 @@ as_bool <- function(x) {
 #'  ) -> tbl_cube
 #' @export
 create_cube <- function(table, dims, aggr) {
+  temp_name = tempname(prefix = "view")
+  temp_view = create_view(table, temp_name)
   chr_dims = paste(dims, collapse="," )
   tbl(
     table$src$con,
@@ -315,7 +317,7 @@ create_cube <- function(table, dims, aggr) {
       grouping_id({chr_dims}) as grouping,
       {chr_dims},
       {aggr}
-    from {table$lazy_query$x}
+    from {temp_name}
     group by cube ({chr_dims})
     order by grouping, ({chr_dims})
     "))
@@ -329,7 +331,7 @@ create_cube <- function(table, dims, aggr) {
 #' @export
 create_view <- function(table, view_name=NULL) {
   if (is.null(view_name)) {
-    view_name = paste0("view_", paste0(sample(letters, 8), collapse = ""))
+    view_name = tempname(prefix = "view")
   }
   DBI::dbExecute(
     table$src$con,
