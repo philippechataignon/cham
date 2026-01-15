@@ -322,3 +322,25 @@ create_cube <- function(table, dims, aggr) {
   )
 }
 
+#' Génère une vue SQL à partir d'une table dbplyr
+#' @param table Table duckdb/dbplyr
+#' @param view_name Nom de la vue, si NULL, un nom aléatoire est généré
+#' @return Table correspondant à la vue
+#' @export
+create_view <- function(table, view_name=NULL) {
+  if (is.null(view_name)) {
+    view_name = paste0("view_", paste0(sample(letters, 8), collapse = ""))
+  }
+  DBI::dbExecute(
+    table$src$con,
+    glue::glue("DROP VIEW IF EXISTS {`view_name`}")
+  )
+  DBI::dbExecute(
+    table$src$con,
+    glue::glue(
+    "CREATE VIEW {`view_name`} AS\n",
+    "{dbplyr::sql_render(table)}\n"
+    )
+  )
+  tbl(table$src$con, view_name)
+}
