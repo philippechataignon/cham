@@ -9,7 +9,6 @@ write_duckdb_parquet(
   path = NULL,
   dir = NULL,
   partition = NULL,
-  order_by = NULL,
   verbose = FALSE
 )
 }
@@ -22,9 +21,9 @@ write_duckdb_parquet(
 
 \item{partition}{chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
 
-\item{order_by}{ordre éventuel de sortie sous forme de vecteur character}
-
 \item{verbose}{indique la requete SQL générée}
+
+\item{order_by}{ordre éventuel de sortie sous forme de vecteur character}
 }
 \value{
 nom du fichier/répertoire

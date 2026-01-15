@@ -41,7 +41,6 @@ write_duckdb_parquet <- function(
   path = NULL,
   dir = NULL,
   partition = NULL,
-  order_by = NULL,
   verbose = FALSE
 ) {
   if (!is.null(dir)) {
@@ -62,17 +61,12 @@ write_duckdb_parquet <- function(
       ", PARTITION_BY ({partition}), OVERWRITE_OR_IGNORE"
     )
   }
-  if (is.null(order_by)) {
-    order_by = ""
-  } else {
-    order_by = paste(" ORDER BY", paste0(order_by, collapse = ','))
-  }
   write_duckdb_parquet_raw(
     conn = table$src$con,
-    query = paste("FROM", table$lazy_query$x, order_by),
+    query = sql_render(table),
     path = path,
     partition = partition_str,
     verbose = verbose
   )
-  invisible(table)
+  table
 }
