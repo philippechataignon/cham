@@ -9,6 +9,7 @@ write_duckdb_parquet(
   path = NULL,
   dir = NULL,
   partition = NULL,
+  keep = FALSE,
   verbose = FALSE
 )
 }
@@ -21,12 +22,12 @@ write_duckdb_parquet(
 
 \item{partition}{chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
 
-\item{verbose}{indique la requete SQL générée}
+\item{keep}{Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut,}
 
-\item{order_by}{ordre éventuel de sortie sous forme de vecteur character}
+\item{verbose}{indique la requete SQL générée}
 }
 \value{
-nom du fichier/répertoire
+table dplyr liée au fichier parquet créé (voir paramètre 'keep' pour conserver la table en entrée)
 }
 \description{
 Écrit fichier parquet depuis une table duckdb
@@ -34,10 +35,8 @@ nom du fichier/répertoire
 \examples{
 s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
 # Fichier simple ear_fam.parquet dans répertoire dir sous s3
-outfile = write_duckdb_parquet(ear_fam, dir = s3expl)
-# Fichier simple ear_fam.parquet trié dans répertoire courant
-outfile = write_duckdb_parquet(ear_fam, order_by=c("var1", "var2"))
+write_duckdb_parquet(ear_fam, dir = s3expl)
 # Fichier partitionné dans répertoire test_fam
-outfile = write_duckdb_parquet(ear_fam,  dir = s3expl,
+write_duckdb_parquet(ear_fam,  dir = s3expl,
   filename="test_fam", partition="c_annee_col", verbose=T)
 }

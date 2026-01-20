@@ -21,18 +21,16 @@ write_duckdb_parquet_raw <- function(
 #' @param table table duckdb
 #' @param path nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table
 #' @param dir répertoire de sortie, éventuellement s3
-#' @param order_by ordre éventuel de sortie sous forme de vecteur character
 #' @param partition chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut
+#' @param keep Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut,
 #' @param verbose indique la requete SQL générée
-#' @return nom du fichier/répertoire
+#' @return table dplyr liée au fichier parquet créé (voir paramètre 'keep' pour conserver la table en entrée)
 #' @examples
 #' s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"
 #' # Fichier simple ear_fam.parquet dans répertoire dir sous s3
-#' outfile = write_duckdb_parquet(ear_fam, dir = s3expl)
-#' # Fichier simple ear_fam.parquet trié dans répertoire courant
-#' outfile = write_duckdb_parquet(ear_fam, order_by=c("var1", "var2"))
+#' write_duckdb_parquet(ear_fam, dir = s3expl)
 #' # Fichier partitionné dans répertoire test_fam
-#' outfile = write_duckdb_parquet(ear_fam,  dir = s3expl,
+#' write_duckdb_parquet(ear_fam,  dir = s3expl,
 #'   filename="test_fam", partition="c_annee_col", verbose=T)
 #' @export
 
@@ -41,6 +39,7 @@ write_duckdb_parquet <- function(
   path = NULL,
   dir = NULL,
   partition = NULL,
+  keep = FALSE,
   verbose = FALSE
 ) {
   if (!is.null(dir)) {
@@ -68,5 +67,8 @@ write_duckdb_parquet <- function(
     partition = partition_str,
     verbose = verbose
   )
-  table
+  if (keep)
+    table
+  else
+    tbl_pqt(table$src$con, path)
 }
