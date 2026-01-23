@@ -18,13 +18,13 @@ param_ear <- function(annee, num_base = "01")
 #' Liste des sources de données RP simples (sans paramètre an)
 #' @export
 list_db = list(
-  pl_clone = list(dbname="ci_pg_popleg_cl01", host="clpopleglg001", port=1983L),
+  pl = list(dbname="ci_pg_popleg_cl01", host="clpopleglg001", port=1983L),
   pl_prod = list(dbname="pi_pg_rpplgarc_pd01", host="pdrpplgarclg001", port=1983L),
   pl_dev = list(dbname="di_pg_popleg_dv01", host="dvpopleglg001", port=1983L),
   achille = list(dbname="ci_pg_achille_cl01", host="clachillelg001", port=1983L),
   achille_dev = list(dbname="di_pg_achille_dv01", host="dvachilleldb01", port=1983L),
-  rorcal_clone = list(dbname="ci_pg_rorcal_cl01", host="clrorcallg001.ad.insee.intra", port=1983L),
-  rca_clone = list(dbname="ci_pg_rca_cl01", host="clrcalg001.ad.insee.intra", port=1983L),
+  rorcal = list(dbname="ci_pg_rorcal_cl01", host="clrorcallg001.ad.insee.intra", port=1983L),
+  rca = list(dbname="ci_pg_rca_cl01", host="clrcalg001.ad.insee.intra", port=1983L),
   rorcal_dev = list(dbname="di_pg_rorcal_dv01", host="dvrorcallg001.ad.insee.intra", port=1983L),
   rca_dev = list(dbname="di_pg_rca_dv01", host="dvrcalg001.ad.insee.intra", port=1983L),
   omer = list(dbname="ci_pg_homere_cl01", host="clhomerelg001", port=1983L),
@@ -34,7 +34,7 @@ list_db = list(
   odic_qf1 = list(dbname="di_pg_odic_dv02", host="dvodiclg002", port=1983L),
   odic_qf2 = list(dbname="di_pg_odic_dv03", host="dvodiclg003", port=1983L),
   odic_dv2  = list(dbname="di_pg_odic_dv02", host="dvodiclg002", port=1983L),
-  itac_clone = list(dbname="ci_pg_itac_cl01", host="clitaclg001", port=1983L),
+  itac = list(dbname="ci_pg_itac_cl01", host="clitaclg001", port=1983L),
   p7_dv1 = list(dbname="di_pg_p7_dv01", host="dvp7lg001", port=1983L),
   p7mca_dv1 = list( dbname="di_pg_p7mca_dv01", host="dvp7mcalg001", port=1983L),
   p7mca = list(dbname="pi_pg_p7mca_pd01", host="pdp7mcalg001", port=1983L)
