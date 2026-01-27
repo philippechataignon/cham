@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_duckdb_parquet.R
 \name{write_duckdb_parquet}
 \alias{write_duckdb_parquet}
-\title{Écrit fichier parquet depuis une table duckdb}
+\title{Écrit un fichier parquet depuis une table duckdb}
 \usage{
 write_duckdb_parquet(
   table,
@@ -22,7 +22,7 @@ write_duckdb_parquet(
 
 \item{partition}{chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut}
 
-\item{keep}{Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut,}
+\item{keep}{Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut.}
 
 \item{verbose}{indique la requete SQL générée}
 }
@@ -30,7 +30,7 @@ write_duckdb_parquet(
 table dplyr liée au fichier parquet créé (voir paramètre 'keep' pour conserver la table en entrée)
 }
 \description{
-Écrit fichier parquet depuis une table duckdb
+Écrit un fichier parquet depuis une table duckdb
 }
 \examples{
 s3expl = "s3://insee/sern-div-exploitations-statistiques-rp/ear_rp"

@@ -1,3 +1,10 @@
+#' Écrit un fichier parquet depuis une requête duckdb
+#' @param conn Connexion duckdb, par exemple db$conn
+#' @param query Requête duckdb
+#' @param path nom du fichier ou répertoire si partition est renseigné
+#' @param partition chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut
+#' @param verbose indique la requete SQL générée
+#' @return Chemin du fichier parquet créé
 #' @export
 write_duckdb_parquet_raw <- function(
   conn,
@@ -17,12 +24,12 @@ write_duckdb_parquet_raw <- function(
   path
 }
 
-#' Écrit fichier parquet depuis une table duckdb
+#' Écrit un fichier parquet depuis une table duckdb
 #' @param table table duckdb
 #' @param path nom du fichier ou répertoire si partition est renseigné, par défaut le nom de la table
 #' @param dir répertoire de sortie, éventuellement s3
 #' @param partition chaine de la forme "var1, var2" pour créer une partition, pas de partition par défaut
-#' @param keep Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut,
+#' @param keep Si TRUE, renvoit la table fournie en entrée sinon la table liée au fichier parquet créé. FALSE par défaut.
 #' @param verbose indique la requete SQL générée
 #' @return table dplyr liée au fichier parquet créé (voir paramètre 'keep' pour conserver la table en entrée)
 #' @examples
@@ -71,4 +78,26 @@ write_duckdb_parquet <- function(
     table
   else
     tbl_pqt(table$src$con, path)
+}
+
+#' Écrit fichier parquet depuis une table duckdb
+#' @param df data.frame
+#' @param conn Connexion duckdb, par exemple db$conn
+#' @param path Nom du fichier, par défaut le nom de la table.parquet
+#' @param dir Répertoire de sortie, éventuellement s3, par défaut répertoire courant
+#' @param keep Si TRUE, renvoit le data.frame fourni en entrée sinon la table liée au fichier parquet créé. FALSE par défaut.
+#' @return table dplyr liée au fichier parquet créé (voir paramètre 'keep' pour conserver le data.frame en entrée)
+#' @export
+write_df_parquet <- function (df, conn, path, dir = NULL, keep = FALSE)
+{
+  name = tempname()
+  if (!is.null(dir))
+    path = file.path(dir, path)
+  duckdb_register(conn, name, df, overwrite = T)
+  outfile = write_duckdb_parquet_raw(conn, paste("FROM", name), path)
+  duckdb_unregister(conn, name)
+  if (keep)
+    df
+  else
+    tbl_pqt(conn, outfile)
 }
