@@ -32,17 +32,30 @@ gen <- function(path)
   ret
 }
 
-#' Accès fichier work
+access_nom <- function(path, nom, s3 = TRUE)
+{
+  if (site %in% c("ls3", "ssp") && s3) {
+    root = s3perso
+  } else {
+    root = "~/work"
+  }
+  file.path(root, nom, path)
+}
+
+#' Accès fichiers de travail
 #' @param path Chemin du fichier work
+#' @export
+store <- function(path, s3 = TRUE)
+{
+  access_nom(path, "data", s3)
+}
+
+#' Accès fichiers permanents
+#' @param path Chemin du fichier store
 #' @export
 work <- function(path, s3 = TRUE)
 {
-  if (site %in% c("ls3", "ssp") && s3) {
-    ret = file.path(s3perso, "work", path)
-  } else {
-    ret = file.path("~/work/data", path)
-  }
-  ret
+  access_nom(path, "work", s3)
 }
 
 #' Accès fichier référence

@@ -2,13 +2,13 @@
 % Please edit documentation in R/access.R
 \name{work}
 \alias{work}
-\title{Accès fichier work}
+\title{Accès fichiers permanents}
 \usage{
 work(path, s3 = TRUE)
 }
 \arguments{
-\item{path}{Chemin du fichier work}
+\item{path}{Chemin du fichier store}
 }
 \description{
-Accès fichier work
+Accès fichiers permanents
 }
