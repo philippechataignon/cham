@@ -4,7 +4,7 @@
 \alias{work}
 \title{Accès fichiers permanents}
 \usage{
-work(path, s3 = TRUE)
+work(path)
 }
 \arguments{
 \item{path}{Chemin du fichier store}
