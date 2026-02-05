@@ -43,7 +43,8 @@ db$disconnect()
 \item \href{#method-duckdb_conn-new}{\code{duckdb_conn$new()}}
 \item \href{#method-duckdb_conn-print}{\code{duckdb_conn$print()}}
 \item \href{#method-duckdb_conn-is_connected}{\code{duckdb_conn$is_connected()}}
-\item \href{#method-duckdb_conn-connect_new}{\code{duckdb_conn$connect_new()}}
+\item \href{#method-duckdb_conn-renew}{\code{duckdb_conn$renew()}}
+\item \href{#method-duckdb_conn-refresh}{\code{duckdb_conn$refresh()}}
 \item \href{#method-duckdb_conn-disconnect}{\code{duckdb_conn$disconnect()}}
 \item \href{#method-duckdb_conn-clone}{\code{duckdb_conn$clone()}}
 }
@@ -102,13 +103,23 @@ TRUE/FALSE
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-duckdb_conn-connect_new"></a>}}
-\if{latex}{\out{\hypertarget{method-duckdb_conn-connect_new}{}}}
-\subsection{Method \code{connect_new()}}{
+\if{html}{\out{<a id="method-duckdb_conn-renew"></a>}}
+\if{latex}{\out{\hypertarget{method-duckdb_conn-renew}{}}}
+\subsection{Method \code{renew()}}{
 Renouvelle la connexion sans changer de duckdb_conn
 Attention: toutes les tables en mémoire sont perdues
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{duckdb_conn$connect_new()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{duckdb_conn$renew()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-duckdb_conn-refresh"></a>}}
+\if{latex}{\out{\hypertarget{method-duckdb_conn-refresh}{}}}
+\subsection{Method \code{refresh()}}{
+Rafraichit les identifiants de connexion S3
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{duckdb_conn$refresh()}\if{html}{\out{</div>}}
 }
 
 }

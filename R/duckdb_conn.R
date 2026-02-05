@@ -62,9 +62,17 @@ duckdb_conn <- R6Class(
     #' @description
     #' Renouvelle la connexion sans changer de duckdb_conn
     #' Attention: toutes les tables en mémoire sont perdues
-    connect_new = function() {
+    renew = function() {
       self$disconnect()
       private$pconn = get_conn(ext = private$pext, dbdir = private$pdbdir)
+      invisible(self)
+    },
+    #' @description
+    #' Rafraichit les identifiants de connexion S3
+    refresh = function() {
+      if (self$is_connected()) {
+        refresh_secret(private$pconn)
+      }
       invisible(self)
     },
     #' @description
@@ -73,7 +81,7 @@ duckdb_conn <- R6Class(
     #' Attention: toutes les tables en mémoire sont perdues
     disconnect = function() {
       if (self$is_connected())
-        suppressWarnings(dbDisconnect(private$pconn))
+        suppressWarnings(DBI::dbDisconnect(private$pconn))
     }
   ),
   private = list(
@@ -102,7 +110,7 @@ duckdb_conn <- R6Class(
     #' @field conn Connexion duckdb
     conn = function() {
       if (!self$is_connected()) {
-        self$connect_new()
+        self$renew()
       }
       private$pconn
     }

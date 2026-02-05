@@ -26,6 +26,8 @@ get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"), new = N
     DBI::dbExecute(conn, "
       SET extension_directory = 'U:/extensions'
     ")
+  } else {
+    refresh_secret(conn)
   }
   if (site == "ls3") {
     DBI::dbExecute(
@@ -33,7 +35,6 @@ get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"), new = N
       SET custom_extension_repository = 'https://nexus.insee.fr/repository/duckdb-extensions/';
       SET temp_directory = '/tmp/duckdb_swap';
     ")
-    refresh_secret(conn)
   }
   if (ext %in% c("core", "geo")) {
     DBI::dbExecute(
