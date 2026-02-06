@@ -1,7 +1,8 @@
 #' Commandes vers partages Windows
-#' @param cmd Commande parmi "get" "mget" "put" "mput" "mkdir" "ls" "lsd"
+#' @param cmd Commande parmi "get" "mget" "put" "mput" "mkdir" "ls" "lsvol"
 #' @param path Chemin de fichier
 #' @param dir Répertoire
+#' @details lsvol liste la racine d'un lecteur avec la syntaxe smb("lsvol", "/X/*/")
 #' @export
 smb <- function(cmd, path, dir = ".")
 {
@@ -11,8 +12,8 @@ smb <- function(cmd, path, dir = ".")
     "put" = "lcd {dir}; cd {rdir}; put {file}",
     "mput" = "lcd {dir}; cd {rdir}; mask ''; recurse ON; prompt OFF; mput *",
     "mkdir" = "cd {rdir}; mkdir {file}",
-    "ls" = "ls",
-    "lsd" = "cd {rdir}; ls"
+    "lsvol" = "ls",
+    "ls" = "cd {rdir}; ls"
   )
   cmd = match.arg(cmd, names(cmds))
   cmd = cmds[[cmd]]

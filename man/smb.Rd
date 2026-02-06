@@ -7,7 +7,7 @@
 smb(cmd, path, dir = ".")
 }
 \arguments{
-\item{cmd}{Commande parmi "get" "mget" "put" "mput" "mkdir" "ls" "lsd"}
+\item{cmd}{Commande parmi "get" "mget" "put" "mput" "mkdir" "ls" "lsvol"}
 
 \item{path}{Chemin de fichier}
 
@@ -15,4 +15,7 @@ smb(cmd, path, dir = ".")
 }
 \description{
 Commandes vers partages Windows
+}
+\details{
+lsvol liste la racine d'un lecteur avec la syntaxe smb("lsvol", "/X/*/")
 }
