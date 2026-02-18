@@ -4,18 +4,34 @@
 \alias{smb}
 \title{Commandes vers partages Windows}
 \usage{
-smb(cmd, path, dir = ".")
+smb(cmd, lettre, dir = ".", file = NULL, lpath = ".", mask = "*")
 }
 \arguments{
-\item{cmd}{Commande parmi "get" "mget" "put" "mput" "mkdir" "ls" "lsvol"}
+\item{cmd}{Commande dont '(m)get' '(m)put' et 'ls'. Voir exemples.}
 
-\item{path}{Chemin de fichier}
+\item{lettre}{Lettre du lecteur distant}
 
-\item{dir}{Répertoire}
+\item{dir}{Répertoire distant}
+
+\item{file}{Chemin distant, répertoire à créer ou fichier selon la commande}
+
+\item{lpath}{Chemin local, répertoire ou fichier selon la commande}
+
+\item{mask}{Limite les commandes mget/mput, par défaut '*'}
 }
 \description{
 Commandes vers partages Windows
 }
-\details{
-lsvol liste la racine d'un lecteur avec la syntaxe smb("lsvol", "/X/*/")
+\examples{
+smb("ls", "X")
+smb("ls", "X", "HAB-MaD-SeRN/naiss")
+smb("get", "X", "HAB-MaD-SeRN/naiss", "naiss_2017.csv", "~/work/data")
+smb("mget","X", "HAB-MaD-SeRN/naiss", lpath="~/work/data")
+smb("mget","X", "HAB-MaD-SeRN/naiss", lpath="~/work/data", mask = "naiss_202*.csv")
+smb("deltree", "X", "HAB-MaD-SeRN", "naiss_copie") # DANGER !
+smb("mkdir", "X", "HAB-MaD-SeRN", "naiss_copie")
+smb("rmdir", "X", "HAB-MaD-SeRN", "naiss_copie")
+smb("mkdir", "X", "HAB-MaD-SeRN", "naiss_copie")
+smb("put", "X", "HAB-MaD-SeRN/naiss_copie", "naiss_2022.csv", "~/work/data/naiss_2022.csv")
+smb("mput", "X", "HAB-MaD-SeRN/naiss_copie", lpath = "~/work/data", mask="*.rds")
 }
