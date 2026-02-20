@@ -18,10 +18,10 @@ get_conn <- function(dbdir = ":memory:", ext = c("none", "core", "geo"), new = N
     dbdir = dbdir,
     bigint = "integer64"
   )
-  DBI::dbExecute(conn, "
-    SET threads = 4;
-    SET preserve_insertion_order = 'false'
-  ")
+  # DBI::dbExecute(conn, "
+  #   SET threads = 4;
+  #   SET preserve_insertion_order = 'false'
+  # ")
   if (site == "aus") {
     DBI::dbExecute(conn, "
       SET extension_directory = 'U:/extensions'

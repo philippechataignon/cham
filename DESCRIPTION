@@ -1,7 +1,7 @@
 Package: cham
 Type: Package fonctions utiles INSEE
 Title: Fonctions utiles
-Version: 1.9.4
+Version: 1.9.5
 Author: Philippe Chataignon
 Maintainer: Philippe Chataignon <philippe.chataignon@gmail.com>
 Description: Fonctions utiles 
